@@ -21,7 +21,9 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mysql2": "^3.11.5",
-    "rimraf": "^6.0.1"
+    "reflect-metadata": "^0.2.2",
+    "rimraf": "^6.0.1",
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

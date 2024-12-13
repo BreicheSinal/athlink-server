@@ -1,5 +1,7 @@
+import { DataSource } from "typeorm";
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
+import "reflect-metadata";
 
 // loading variables from .env
 dotenv.config();
@@ -17,22 +19,30 @@ interface Env {
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT }: Env =
   process.env as unknown as Env;
 
+const dbPort = Number(DB_PORT);
+
+if (isNaN(dbPort) || dbPort <= 0) {
+  throw new Error(`Invalid DB_PORT`);
+}
+
+const AppDataSource = new DataSource({
+  type: "mysql",
+  host: DB_HOST,
+  port: dbPort,
+  username: DB_USER,
+  password: DB_PASSWORD,
+  database: DB_NAME,
+  synchronize: true,
+  logging: true,
+  //entities:[],
+  migrations: [],
+  subscribers: [],
+});
+
 // set up db connection
 const connectToDatabase = async () => {
   try {
-    const dbPort = Number(DB_PORT);
-
-    if (isNaN(dbPort) || dbPort <= 0) {
-      throw new Error(`Invalid DB_PORT`);
-    }
-
-    const db = await mysql.createConnection({
-      host: DB_HOST,
-      user: DB_USER,
-      password: DB_PASSWORD,
-      database: DB_NAME,
-      port: dbPort,
-    });
+    await AppDataSource.initialize();
 
     console.log(`Connected to database successfully!`);
   } catch (error: unknown) {
