@@ -18,7 +18,7 @@ const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT }: Env =
   process.env as unknown as Env;
 
 // set up db connection
-(async () => {
+export const connectToDatabase = async () => {
   try {
     const dbPort = Number(DB_PORT);
 
@@ -42,4 +42,4 @@ const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT }: Env =
 
     process.exit(1);
   }
-})();
+};
