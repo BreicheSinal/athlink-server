@@ -5,20 +5,27 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx tsc && node dist/index.js",
-    "dev": "nodemon"
+    "build": "rimraf dist & npx tsc",
+    "prestart": "npm run build",
+    "start": "node dist/index.js",
+    "preserve": "npm run build",
+    "serve": "concurrently \"npx tsc -w\" \"nodemon dist/index.ts\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^4.21.2"
+    "concurrently": "^9.1.0",
+    "express": "^4.21.2",
+    "rimraf": "^6.0.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
-    "@types/node": "^22.10.1",
+    "@types/node": "^22.10.2",
+    "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.2"
   }
 }
