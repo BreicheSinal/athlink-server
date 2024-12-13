@@ -1,6 +1,6 @@
 import { init } from "./config/init";
 import express, { Express } from "express";
-import { connectToDatabase } from "./db/connection";
+import connectToDatabase  from "./db/connection";
 
 const app: Express = express();
 
