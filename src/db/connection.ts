@@ -31,7 +31,7 @@ const AppDataSource = new DataSource({
   username: DB_USER,
   password: DB_PASSWORD,
   database: DB_NAME,
-  synchronize: true,
+  synchronize: false,
   logging: true,
   //entities:[],
   migrations: [],
