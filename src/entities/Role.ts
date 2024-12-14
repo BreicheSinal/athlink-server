@@ -21,16 +21,9 @@ export class Role {
   })
   role_name!: string;
 
-  @CreateDateColumn({
-    type: "datetime",
-    default: () => "CURRENT_TIMESTAMP",
-  })
+  @CreateDateColumn({ type: "datetime" })
   created_at!: Date;
 
-  @UpdateDateColumn({
-    type: "datetime",
-    default: () => "CURRENT_TIMESTAMP",
-    onUpdate: "CURRENT_TIMESTAMP",
-  })
+  @UpdateDateColumn({ type: "datetime" })
   updated_at!: Date;
 }
