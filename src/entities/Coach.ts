@@ -1,0 +1,44 @@
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  Index,
+} from "typeorm";
+
+import { User } from "./User";
+import { Club } from "./Club";
+
+@Entity("coach")
+@Index(["user", "club"])
+export class Coach {
+  @PrimaryGeneratedColumn("increment", {
+    type: "bigint",
+    unsigned: true,
+  })
+  id!: number;
+
+  @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "user_id" })
+  user!: User;
+
+  @ManyToOne(() => Club, (club) => club.id, { onDelete: "CASCADE" })
+  @JoinColumn({ name: "club_id" })
+  club!: Club;
+
+  @Column({
+    type: "varchar",
+    length: 255,
+    nullable: false,
+  })
+  specialty!: string;
+
+  @CreateDateColumn({ type: "datetime" })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ type: "datetime" })
+  updatedAt!: Date;
+}
