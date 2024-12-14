@@ -4,11 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne,
-  JoinColumn,
+  OneToMany,
 } from "typeorm";
 
-import { Role } from "./Role";
+import { UserRole } from "./UserRole";
 
 @Entity("user")
 export class User {
@@ -22,12 +21,15 @@ export class User {
     type: "varchar",
     length: 255,
     unique: true,
+    nullable: false,
   })
   name!: string;
 
   @Column({
     type: "varchar",
     length: 255,
+    nullable: false,
+    select: false,
   })
   password!: string;
 
@@ -35,23 +37,11 @@ export class User {
     type: "varchar",
     length: 255,
     unique: true,
+    nullable: false,
   })
   email!: string;
 
-  @Column({
-    type: "tinyint",
-    unsigned: true,
-  })
-  role_id!: number;
-
-  @ManyToOne(() => Role, (role) => role.id, { eager: true })
-  @JoinColumn({ name: "role_id" })
-  role!: Role;
-
-  @Column({
-    type: "text",
-    nullable: true,
-  })
+  @Column({ type: "text", nullable: true })
   bio?: string;
 
   @CreateDateColumn({ type: "datetime" })
@@ -59,4 +49,7 @@ export class User {
 
   @UpdateDateColumn({ type: "datetime" })
   updated_at!: Date;
+
+  @OneToMany(() => UserRole, (userRole) => userRole.user)
+  userRoles!: UserRole[];
 }

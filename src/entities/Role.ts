@@ -4,7 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm";
+
+import { UserRole } from "./UserRole";
 
 @Entity("role")
 export class Role {
@@ -18,6 +21,7 @@ export class Role {
     type: "varchar",
     length: 50,
     unique: true,
+    nullable: false,
   })
   role_name!: string;
 
@@ -26,4 +30,7 @@ export class Role {
 
   @UpdateDateColumn({ type: "datetime" })
   updated_at!: Date;
+
+  @OneToMany(() => UserRole, (userRole) => userRole.role)
+  userRoles!: UserRole[];
 }
