@@ -6,9 +6,10 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { User } from "./User"; 
 
-@Entity("connection") 
+import { User } from "./User";
+
+@Entity("connection")
 export class Connection {
   @PrimaryColumn({ type: "bigint", unsigned: true })
   user_id!: number;
