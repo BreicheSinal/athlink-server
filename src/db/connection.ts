@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import dotenv from "dotenv";
 import "reflect-metadata";
+import { join } from "path";
 
 // loading variables from .env
 dotenv.config();
@@ -33,7 +34,7 @@ const AppDataSource = new DataSource({
   database: DB_NAME,
   synchronize: false,
   logging: true,
-  //entities:[],
+  entities: [join(__dirname, "src/entities/**/*.{ts}")],
   migrations: [],
   subscribers: [],
 });
