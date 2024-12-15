@@ -12,8 +12,6 @@ import { Chat } from "./Chat";
 import { User } from "./User";
 
 @Entity("chat_message")
-@Index("chat_id_index", ["chat_id"])
-@Index("sender_id_index", ["sender_id"])
 export class ChatMessage {
   @PrimaryGeneratedColumn("increment", {
     type: "bigint",

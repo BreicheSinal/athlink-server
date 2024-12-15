@@ -12,9 +12,6 @@ import {
 import { Club } from "./Club";
 
 @Entity("try_out")
-@Index("idx_club_id", ["clubId"])
-@Index("idx_date", ["date"])
-@Index("idx_name", ["name"])
 export class TryOut {
   @PrimaryGeneratedColumn("increment", {
     type: "bigint",

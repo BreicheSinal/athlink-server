@@ -1,10 +1,10 @@
 import {
   Entity,
   PrimaryGeneratedColumn,
-  Column,
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  JoinColumn,
 } from "typeorm";
 
 import { User } from "./User";
@@ -19,19 +19,15 @@ export class UserRole {
     nullable: false,
     onDelete: "CASCADE",
   })
+  @JoinColumn({ name: "user_id" })
   user!: User;
-
-  @Column()
-  user_id!: number;
 
   @ManyToOne(() => Role, (role) => role.userRoles, {
     nullable: false,
     onDelete: "CASCADE",
   })
+  @JoinColumn({ name: "role_id" })
   role!: Role;
-
-  @Column()
-  role_id!: number;
 
   @CreateDateColumn({ type: "datetime" })
   created_at!: Date;

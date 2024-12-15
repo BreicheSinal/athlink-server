@@ -10,7 +10,6 @@ import {
 import { User } from "./User";
 
 @Entity("chats")
-@Index(["user_id_1", "user_id_2"])
 export class Chat {
   @PrimaryGeneratedColumn("increment", {
     type: "bigint",

@@ -13,9 +13,6 @@ import { Athlete } from "./Athlete";
 import { TryOut } from "./TryOut";
 
 @Entity("athlete_try_out_application")
-@Index("idx_athlete_id", ["athleteId"])
-@Index("idx_try_out_id", ["tryOutId"])
-@Index("idx_status", ["status"])
 export class AthleteTryOutApplication {
   @PrimaryGeneratedColumn("increment", {
     type: "bigint",
