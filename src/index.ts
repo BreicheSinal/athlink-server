@@ -7,6 +7,7 @@ import auth from "./modules/Auth/auth.routes";
 const app: Express = express();
 
 init(app);
+app.use(express.json());
 app.use("/", auth);
 
 app.listen(process.env.SERVER_PORT, async () => {

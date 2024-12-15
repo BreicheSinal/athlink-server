@@ -28,7 +28,7 @@ dotenv.config();
 // jwt_secret from env
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const Regist = async (req: any, res: any) => {
+export const register = async (req: any, res: any) => {
   try {
     const { name, email, password, bio, roles } = req.body;
 
