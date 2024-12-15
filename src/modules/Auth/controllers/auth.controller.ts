@@ -78,5 +78,30 @@ export const Regist = async (req: any, res: any) => {
 
     // saved user
     const savedUser = await userRepository.save(user);
+
+    // handling roles
+    if (roles && roles.length > 0) {
+      await Promise.all(
+        roles.map(async (roleId: number) => {
+          const role = await roleRepository.findOne({
+            where: { id: roleId },
+          });
+
+          if (!role) {
+            return throwNotFound({
+              entity: `Role with id ${roleId}`,
+              check: true,
+              res,
+            });
+          }
+
+          const userRole = new UserRole();
+          userRole.user = savedUser;
+          userRole.role = role;
+
+          return userRoleRepository.save(userRole);
+        })
+      );
+    }
   } catch {}
 };
