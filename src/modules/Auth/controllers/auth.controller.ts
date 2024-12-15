@@ -117,5 +117,14 @@ export const Regist = async (req: any, res: any) => {
       JWT_SECRET!,
       { expiresIn: "1h" }
     );
+
+    // removing password before sending response
+    const { password: _, ...userWithoutPass } = savedUser;
+
+    return res.status(201).json({
+      user: userWithoutPass,
+      token,
+      message: "User registered successfully",
+    });
   } catch {}
 };
