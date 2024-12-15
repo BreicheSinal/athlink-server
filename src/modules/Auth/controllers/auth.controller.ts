@@ -126,5 +126,13 @@ export const Regist = async (req: any, res: any) => {
       token,
       message: "User registered successfully",
     });
-  } catch {}
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
 };
