@@ -14,6 +14,12 @@ const isValidName = (name: string) => {
   return nameRegex.test(name);
 };
 
+// email form validation
+const isValidEmail = (email: string) => {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(email);
+};
+
 export const Regist = async (req: any, res: any) => {
   try {
     const { name, email, password, bio, roles } = req.body;
@@ -31,6 +37,15 @@ export const Regist = async (req: any, res: any) => {
     if (!isValidName(name)) {
       return throwError({
         message: "Name must only contain alphabetic characters",
+        res,
+        status: 400,
+      });
+    }
+
+    // additional validation for email
+    if (!isValidEmail(email)) {
+      return throwError({
+        message: "Invalid email format",
         res,
         status: 400,
       });
