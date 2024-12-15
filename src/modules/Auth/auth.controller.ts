@@ -1,8 +1,8 @@
-import { AppDataSource } from "../../../db/connection";
-import { User } from "../../../entities/User";
-import { Role } from "../../../entities/Role";
-import { UserRole } from "../../../entities/UserRole";
-import { throwError, throwNotFound } from "../../../utils/error";
+import { AppDataSource } from "../../db/connection";
+import { User } from "../../entities/User";
+import { Role } from "../../entities/Role";
+import { UserRole } from "../../entities/UserRole";
+import { throwError, throwNotFound } from "../../utils/error";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
