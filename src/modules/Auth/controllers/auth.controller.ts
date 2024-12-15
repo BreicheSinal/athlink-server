@@ -4,6 +4,8 @@ import { Role } from "../../../entities/Role";
 import { UserRole } from "../../../entities/UserRole";
 import { throwError, throwNotFound } from "../../../utils/error";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
 const userRepository = AppDataSource.getRepository(User);
 const roleRepository = AppDataSource.getRepository(Role);
@@ -20,6 +22,11 @@ const isValidEmail = (email: string) => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return emailRegex.test(email);
 };
+
+dotenv.config();
+
+// jwt_secret from env
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export const Regist = async (req: any, res: any) => {
   try {
@@ -103,5 +110,12 @@ export const Regist = async (req: any, res: any) => {
         })
       );
     }
+
+    // generating JWT
+    const token = jwt.sign(
+      { id: savedUser.id, email: savedUser.email, roles },
+      JWT_SECRET!,
+      { expiresIn: "1h" }
+    );
   } catch {}
 };
