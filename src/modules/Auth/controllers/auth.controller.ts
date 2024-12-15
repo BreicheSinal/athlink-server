@@ -69,6 +69,14 @@ export const Regist = async (req: any, res: any) => {
     const salt = await bcrypt.genSalt(10);
     const hashed = await bcrypt.hash(password, salt);
 
-    
+    // creating user
+    const user = new User();
+    user.name = name;
+    user.email = email;
+    user.password = hashed;
+    user.bio = bio;
+
+    // saved user
+    const savedUser = await userRepository.save(user);
   } catch {}
 };
