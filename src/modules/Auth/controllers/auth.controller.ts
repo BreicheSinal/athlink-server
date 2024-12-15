@@ -3,6 +3,7 @@ import { User } from "../../../entities/User";
 import { Role } from "../../../entities/Role";
 import { UserRole } from "../../../entities/UserRole";
 import { throwError, throwNotFound } from "../../../utils/error";
+import bcrypt from "bcryptjs";
 
 const userRepository = AppDataSource.getRepository(User);
 const roleRepository = AppDataSource.getRepository(Role);
@@ -63,5 +64,11 @@ export const Regist = async (req: any, res: any) => {
         status: 409,
       });
     }
+
+    // hashing password
+    const salt = await bcrypt.genSalt(10);
+    const hashed = await bcrypt.hash(password, salt);
+
+    
   } catch {}
 };
