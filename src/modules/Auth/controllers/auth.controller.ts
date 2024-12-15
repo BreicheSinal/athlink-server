@@ -50,5 +50,18 @@ export const Regist = async (req: any, res: any) => {
         status: 400,
       });
     }
+
+    // checking if user already exists
+    const existingUser = await userRepository.findOne({
+      where: [{ email }, { name }],
+    });
+
+    if (existingUser) {
+      return throwError({
+        message: "User already exists",
+        res,
+        status: 409,
+      });
+    }
   } catch {}
 };
