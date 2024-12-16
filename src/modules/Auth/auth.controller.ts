@@ -164,6 +164,17 @@ export const login = async (req: any, res: any) => {
         status: 401,
       });
     }
+
+    // verifying password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return throwError({
+        message: "Invalid email or password",
+        res,
+        status: 401,
+      });
+    }
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
