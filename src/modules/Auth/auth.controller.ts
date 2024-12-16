@@ -175,6 +175,9 @@ export const login = async (req: any, res: any) => {
         status: 401,
       });
     }
+
+    // extracting (explicitly to include them in res)user roles
+    const roles = user.userRoles.map((userRole) => userRole.role.role_name);
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
