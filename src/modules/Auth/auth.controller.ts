@@ -149,6 +149,14 @@ export const login = async (req: any, res: any) => {
         status: 400,
       });
     }
+
+    // finding user with roles
+    const user = await userRepository.findOne({
+      where: { email },
+      select: ["id", "name", "email", "password"],
+      relations: ["userRoles", "userRoles.role"],
+    });
+
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
