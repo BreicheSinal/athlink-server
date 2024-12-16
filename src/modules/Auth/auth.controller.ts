@@ -157,6 +157,13 @@ export const login = async (req: any, res: any) => {
       relations: ["userRoles", "userRoles.role"],
     });
 
+    if (!user) {
+      return throwError({
+        message: "Invalid email or password",
+        res,
+        status: 401,
+      });
+    }
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
