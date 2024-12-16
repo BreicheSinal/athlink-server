@@ -179,13 +179,21 @@ export const login = async (req: any, res: any) => {
     // extracting (explicitly to include them in res)user roles
     const roles = user.userRoles.map((userRole) => userRole.role.role_name);
 
-    // generating JWT 
+    // generating JWT
     const token = jwt.sign(
       { id: user.id, email: user.email, roles },
       JWT_SECRET!,
       { expiresIn: "1h" }
     );
 
+    // removing password before sending response
+    const { password: _, ...userWithoutPassword } = user;
+
+    return res.status(200).json({
+      message: "Login successful",
+      user: { ...userWithoutPassword, roles },
+      token,
+    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
