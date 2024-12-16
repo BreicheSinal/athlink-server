@@ -136,3 +136,26 @@ export const register = async (req: any, res: any) => {
     });
   }
 };
+
+export const login = async (req: any, res: any) => {
+  try {
+    const { email, password } = req.body;
+
+    // validating input
+    if (!email || !password) {
+      return throwError({
+        message: "Email and password are required",
+        res,
+        status: 400,
+      });
+    }
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
