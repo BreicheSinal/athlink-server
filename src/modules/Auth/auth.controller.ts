@@ -6,7 +6,7 @@ import { throwError, throwNotFound } from "../../utils/error";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-
+import { Request, Response } from "express";
 const userRepository = AppDataSource.getRepository(User);
 const roleRepository = AppDataSource.getRepository(Role);
 const userRoleRepository = AppDataSource.getRepository(UserRole);
@@ -28,7 +28,7 @@ dotenv.config();
 // jwt_secret from env
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const register = async (req: any, res: any) => {
+export const register = async (req: Request, res: Response) => {
   try {
     const { name, email, password, bio, roles } = req.body;
 
@@ -137,7 +137,7 @@ export const register = async (req: any, res: any) => {
   }
 };
 
-export const login = async (req: any, res: any) => {
+export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
