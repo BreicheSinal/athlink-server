@@ -1,7 +1,7 @@
 import { AppDataSource } from "../../db/connection";
-import { User } from "../../entities/User";
-import { Role } from "../../entities/Role";
-import { UserRole } from "../../entities/UserRole";
+import { User } from "../../db/entities/User";
+import { Role } from "../../db/entities/Role";
+import { UserRole } from "../../db/entities/UserRole";
 import { throwError, throwNotFound } from "../../utils/error";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
