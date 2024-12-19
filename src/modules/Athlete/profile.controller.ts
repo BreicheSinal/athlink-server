@@ -26,6 +26,14 @@ export const editProfile = async (req: Request, res: Response) => {
     const athlete = await athleteRepository.findOne({
       where: { id: parseInt(id) },
     });
+
+    if (!athlete) {
+      return throwError({
+        message: "Athlete not found",
+        res,
+        status: 404,
+      });
+    }
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
