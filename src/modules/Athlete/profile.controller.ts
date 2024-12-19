@@ -22,6 +22,15 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
+    // validating position
+    if (position && typeof position !== "string") {
+      return throwError({
+        message: "Position must be a string",
+        res,
+        status: 400,
+      });
+    }
+
     // finding athlete by id
     const athlete = await athleteRepository.findOne({
       where: { id: parseInt(id) },
