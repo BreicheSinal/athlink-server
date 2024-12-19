@@ -21,6 +21,11 @@ export const editProfile = async (req: Request, res: Response) => {
         status: 400,
       });
     }
+
+    // finding athlete by id
+    const athlete = await athleteRepository.findOne({
+      where: { id: parseInt(id) },
+    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
