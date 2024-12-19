@@ -31,10 +31,25 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
-    // validating position
+    // validating age
     if (age && typeof age !== "number") {
       return throwError({
         message: "Age must be a number",
+        res,
+        status: 400,
+      });
+    }
+
+    // validating height
+    if (
+      height &&
+      (typeof height !== "number" ||
+        isNaN(height) ||
+        height <= 0 ||
+        height > 300)
+    ) {
+      return throwError({
+        message: "Height must be a number (> 0 || < 300)",
         res,
         status: 400,
       });
