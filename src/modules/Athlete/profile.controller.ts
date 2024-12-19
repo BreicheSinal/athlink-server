@@ -4,7 +4,6 @@ import { AppDataSource } from "../../db/connection";
 import { Athlete } from "../../db/entities/Athlete";
 
 import { throwError, throwNotFound } from "../../utils/error";
-import { error } from "console";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
 
@@ -32,9 +31,12 @@ export const editProfile = async (req: Request, res: Response) => {
     }
 
     // validating age
-    if (age && typeof age !== "number") {
+    if (
+      age &&
+      (typeof age !== "number" || isNaN(age) || age <= 0 || age > 120)
+    ) {
       return throwError({
-        message: "Age must be a number",
+        message: "Age must be a number ( > 0 || < 300)",
         res,
         status: 400,
       });
@@ -49,7 +51,7 @@ export const editProfile = async (req: Request, res: Response) => {
         height > 300)
     ) {
       return throwError({
-        message: "Height must be a number (> 0 || < 300)",
+        message: "Height must be a number ( > 0 || < 300)",
         res,
         status: 400,
       });
@@ -64,7 +66,7 @@ export const editProfile = async (req: Request, res: Response) => {
         height > 500)
     ) {
       return throwError({
-        message: "Weight must be a number (> 0 || < 500)",
+        message: "Weight must be a number ( > 0 || < 500)",
         res,
         status: 400,
       });
