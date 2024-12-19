@@ -13,41 +13,46 @@ import { FederationType } from "./FederationType";
 
 @Entity("federation")
 export class Federation {
-  @PrimaryGeneratedColumn("increment", { type: "bigint", unsigned: true })
-  id!: number;
+  @PrimaryGeneratedColumn("increment", {
+    type: "bigint",
+    unsigned: true,
+  })
+  id: number;
 
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({ name: "user_id" })
-  user!: User;
+  user: User;
 
-  @ManyToOne(() => FederationType, (federationType) => federationType.id)
+  @ManyToOne(() => FederationType, (federationType) => federationType.id, {
+    nullable: true,
+  })
   @JoinColumn({ name: "federation_type_id" })
-  federationType!: FederationType;
+  federationType: FederationType;
+
+  @Column({
+    type: "varchar",
+    length: 255,
+    nullable: true,
+  })
+  location: string;
 
   @Column({
     type: "varchar",
     length: 100,
     nullable: true,
   })
-  location?: string;
-
-  @Column({
-    type: "varchar",
-    length: 100,
-    nullable: true,
-  })
-  country?: string;
+  country: string;
 
   @Column({
     type: "int",
     unsigned: true,
     nullable: true,
   })
-  foundedYear?: number;
+  founded_year: number;
 
   @CreateDateColumn({ type: "datetime" })
-  createdAt!: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: "datetime" })
-  updatedAt!: Date;
+  updated_at: Date;
 }

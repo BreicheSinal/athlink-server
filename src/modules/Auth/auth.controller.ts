@@ -6,6 +6,8 @@ import { Role } from "../../db/entities/Role";
 import { UserRole } from "../../db/entities/UserRole";
 import { Athlete } from "../../db/entities/Athlete";
 import { Club } from "../../db/entities/Club";
+import { Federation } from "../../db/entities/Federation";
+
 import { throwError, throwNotFound } from "../../utils/error";
 
 import bcrypt from "bcryptjs";
@@ -17,6 +19,7 @@ const roleRepository = AppDataSource.getRepository(Role);
 const userRoleRepository = AppDataSource.getRepository(UserRole);
 const athleteRepository = AppDataSource.getRepository(Athlete);
 const clubRepository = AppDataSource.getRepository(Club);
+const federationRepository = AppDataSource.getRepository(Federation);
 
 // only alphabetic characters in name
 const isValidName = (name: string) => {
@@ -127,6 +130,13 @@ export const register = async (req: Request, res: Response) => {
             club.user = savedUser;
 
             await clubRepository.save(club);
+          }
+          // role is federation - create a federation record
+          else if (role.role_name.toLowerCase() === "federation") {
+            const federation = new Federation();
+            federation.user = savedUser;
+
+            await federationRepository.save(federation);
           }
         })
       );

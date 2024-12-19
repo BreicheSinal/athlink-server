@@ -12,17 +12,17 @@ export class FederationType {
     type: "int",
     unsigned: true,
   })
-  id!: number;
+  id: number;
 
   @Column({
     type: "varchar",
     length: 100,
   })
-  type_name!: string;
+  type_name: string;
 
   @CreateDateColumn({ type: "datetime" })
-  created_at!: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: "datetime" })
-  updated_at!: Date;
+  updated_at: Date;
 }
