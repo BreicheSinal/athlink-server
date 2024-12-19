@@ -4,6 +4,7 @@ import { AppDataSource } from "../../db/connection";
 import { User } from "../../db/entities/User";
 import { Role } from "../../db/entities/Role";
 import { UserRole } from "../../db/entities/UserRole";
+import { Club } from "../../db/entities/Club";
 import { throwError, throwNotFound } from "../../utils/error";
 
 import bcrypt from "bcryptjs";
@@ -13,6 +14,7 @@ import dotenv from "dotenv";
 const userRepository = AppDataSource.getRepository(User);
 const roleRepository = AppDataSource.getRepository(Role);
 const userRoleRepository = AppDataSource.getRepository(UserRole);
+const clubRepository = AppDataSource.getRepository(Club);
 
 // only alphabetic characters in name
 const isValidName = (name: string) => {
@@ -33,7 +35,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, bio, roles } = req.body;
+    const { name, email, password, roles } = req.body;
 
     // validating input
     if (!name || !email || !password || !roles) {
@@ -84,7 +86,6 @@ export const register = async (req: Request, res: Response) => {
     user.name = name;
     user.email = email;
     user.password = hashed;
-    user.bio = bio;
 
     // saved user
     const savedUser = await userRepository.save(user);
@@ -109,7 +110,15 @@ export const register = async (req: Request, res: Response) => {
           userRole.user = savedUser;
           userRole.role = role;
 
-          return userRoleRepository.save(userRole);
+          await userRoleRepository.save(userRole);
+
+          // role is club - create a club record
+          if (role.role_name.toLowerCase() === "club") {
+            const club = new Club();
+            club.user = savedUser;
+
+            await clubRepository.save(club);
+          }
         })
       );
     }

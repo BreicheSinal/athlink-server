@@ -16,29 +16,29 @@ export class Club {
     type: "bigint",
     unsigned: true,
   })
-  id!: number;
+  id: number;
 
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({ name: "user_id" })
-  user!: User;
+  user: User;
 
   @Column({
     type: "varchar",
     length: 255,
     nullable: true,
   })
-  location?: string;
+  location: string;
 
   @Column({
     type: "int",
     unsigned: true,
     nullable: true,
   })
-  foundedYear?: number;
+  founded_year: number;
 
   @CreateDateColumn({ type: "datetime" })
-  createdAt!: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: "datetime" })
-  updatedAt!: Date;
+  updated_at: Date;
 }
