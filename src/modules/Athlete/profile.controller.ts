@@ -55,6 +55,21 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
+    // validating weight
+    if (
+      weight &&
+      (typeof weight !== "number" ||
+        isNaN(weight) ||
+        height <= 0 ||
+        height > 500)
+    ) {
+      return throwError({
+        message: "Weight must be a number (> 0 || < 500)",
+        res,
+        status: 400,
+      });
+    }
+
     // finding athlete by id
     const athlete = await athleteRepository.findOne({
       where: { id: parseInt(id) },
