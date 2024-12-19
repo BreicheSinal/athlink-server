@@ -31,6 +31,15 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
+    // validating position
+    if (age && typeof age !== "number") {
+      return throwError({
+        message: "Age must be a number",
+        res,
+        status: 400,
+      });
+    }
+
     // finding athlete by id
     const athlete = await athleteRepository.findOne({
       where: { id: parseInt(id) },
