@@ -4,6 +4,7 @@ import { AppDataSource } from "../../db/connection";
 import { Athlete } from "../../db/entities/Athlete";
 
 import { throwError, throwNotFound } from "../../utils/error";
+import { error } from "console";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
 
@@ -11,6 +12,15 @@ export const editProfile = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { position, age, height, weight } = req.body;
+
+    // validating ID
+    if (!id) {
+      return throwError({
+        message: "ID required",
+        res,
+        status: 400,
+      });
+    }
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
