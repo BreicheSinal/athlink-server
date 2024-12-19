@@ -17,28 +17,28 @@ export class Athlete {
     type: "bigint",
     unsigned: true,
   })
-  id!: number;
+  id: number;
 
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({ name: "user_id" })
-  user!: User;
+  user: User;
 
-  @ManyToOne(() => Club, (club) => club.id)
+  @ManyToOne(() => Club, (club) => club.id, { nullable: true })
   @JoinColumn({ name: "club_id" })
-  club!: Club;
+  club: Club;
 
   @Column({
     type: "varchar",
     length: 255,
     nullable: true,
   })
-  position?: string;
+  position: string;
 
   @Column({
     type: "int",
     nullable: true,
   })
-  age?: number;
+  age: number;
 
   @Column({
     type: "decimal",
@@ -46,7 +46,7 @@ export class Athlete {
     scale: 2,
     nullable: true,
   })
-  height?: number;
+  height: number;
 
   @Column({
     type: "decimal",
@@ -54,11 +54,11 @@ export class Athlete {
     scale: 2,
     nullable: true,
   })
-  weight?: number;
+  weight: number;
 
   @CreateDateColumn({ type: "datetime" })
-  createdAt!: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: "datetime" })
-  updatedAt!: Date;
+  updated_at: Date;
 }

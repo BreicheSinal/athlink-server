@@ -4,6 +4,7 @@ import { AppDataSource } from "../../db/connection";
 import { User } from "../../db/entities/User";
 import { Role } from "../../db/entities/Role";
 import { UserRole } from "../../db/entities/UserRole";
+import { Athlete } from "../../db/entities/Athlete";
 import { Club } from "../../db/entities/Club";
 import { throwError, throwNotFound } from "../../utils/error";
 
@@ -14,6 +15,7 @@ import dotenv from "dotenv";
 const userRepository = AppDataSource.getRepository(User);
 const roleRepository = AppDataSource.getRepository(Role);
 const userRoleRepository = AppDataSource.getRepository(UserRole);
+const athleteRepository = AppDataSource.getRepository(Athlete);
 const clubRepository = AppDataSource.getRepository(Club);
 
 // only alphabetic characters in name
@@ -112,8 +114,15 @@ export const register = async (req: Request, res: Response) => {
 
           await userRoleRepository.save(userRole);
 
+          // role is athlete - create an athlete record
+          if (role.role_name.toLocaleLowerCase() === "athlete") {
+            const athlete = new Athlete();
+            athlete.user = savedUser;
+
+            await athleteRepository.save(athlete);
+          }
           // role is club - create a club record
-          if (role.role_name.toLowerCase() === "club") {
+          else if (role.role_name.toLowerCase() === "club") {
             const club = new Club();
             club.user = savedUser;
 
