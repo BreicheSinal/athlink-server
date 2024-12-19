@@ -1,12 +1,15 @@
+import { Request, Response } from "express";
+
 import { AppDataSource } from "../../db/connection";
 import { User } from "../../db/entities/User";
 import { Role } from "../../db/entities/Role";
 import { UserRole } from "../../db/entities/UserRole";
 import { throwError, throwNotFound } from "../../utils/error";
+
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { Request, Response } from "express";
+
 const userRepository = AppDataSource.getRepository(User);
 const roleRepository = AppDataSource.getRepository(Role);
 const userRoleRepository = AppDataSource.getRepository(UserRole);
