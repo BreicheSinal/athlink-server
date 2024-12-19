@@ -84,6 +84,19 @@ export const editProfile = async (req: Request, res: Response) => {
         status: 404,
       });
     }
+
+    // updating fields
+    if (position) athlete.position = position;
+    if (age) athlete.age = age;
+    if (height) athlete.height = height;
+    if (weight) athlete.weight = weight;
+
+    const updatedAthlete = await athleteRepository.save(athlete);
+
+    return res.status(200).json({
+      message: "Athlete updated successfully",
+      athlete: updatedAthlete,
+    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
