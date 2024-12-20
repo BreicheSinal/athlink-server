@@ -3,13 +3,17 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../../db/connection";
 import { Athlete } from "../../db/entities/Athlete";
 import { Club } from "../../db/entities/Club";
+import { User } from "../../db/entities/User";
+import { Trophy } from "../../db/entities/Trophy";
+import { Federation } from "../../db/entities/Federation";
 
 import { throwError, throwNotFound } from "../../utils/error";
-import { User } from "../../db/entities/User";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
 const clubRepository = AppDataSource.getRepository(Club);
 const userRepository = AppDataSource.getRepository(User);
+const trophyRepository = AppDataSource.getRepository(Trophy);
+const federationRepository = AppDataSource.getRepository(Federation);
 
 export const editProfile = async (req: Request, res: Response) => {
   try {
@@ -147,7 +151,7 @@ export const editProfile = async (req: Request, res: Response) => {
 
 export const editBio = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { id } = req.params; //athlete id
     const { bio } = req.body;
 
     // validating ID
@@ -209,8 +213,11 @@ export const editBio = async (req: Request, res: Response) => {
   }
 };
 
-export const editTrophies = async (req: Request, res: Response) => {
+export const addTrophy = async (req: Request, res: Response) => {
   try {
+    // taken on user id (case: athlete-coach user | when project is scaled)
+    const entity_id = parseInt(req.params.entity_id, 10); 
+    const { name, description, category, federation_id } = req.body;
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
