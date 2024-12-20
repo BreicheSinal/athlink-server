@@ -317,8 +317,26 @@ export const addTrophy = async (req: Request, res: Response) => {
 
 export const addExperience = async (req: Request, res: Response) => {
   try {
-    const { user_id } = req.params;
+    const user_id = parseInt(req.params.user_id, 10);
     const { name, type, date, description } = req.body;
+
+    // validating user id
+    if (!user_id || typeof user_id !== "number" || user_id <= 0)
+      return throwError({
+        message: "User id must be a valid number",
+        res,
+        status: 400,
+      });
+
+    const user = await userRepository.findOne({ where: { id: user_id } });
+
+    if (!user) {
+      return throwNotFound({
+        entity: `Federation with id ${user}`,
+        check: true,
+        res,
+      });
+    }
 
     // validating name
     if (!name || typeof name !== "string" || name.trim() === "")
