@@ -231,6 +231,17 @@ export const addTrophy = async (req: Request, res: Response) => {
         res,
       });
     }
+
+    // validating entity id
+    if (isNaN(entity_id)) {
+      return throwNotFound({
+        entity: `Invalid entity_id: ${req.params.entity_id}`,
+        check: true,
+        res,
+      });
+    }
+
+
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
