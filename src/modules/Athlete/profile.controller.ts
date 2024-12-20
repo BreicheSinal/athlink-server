@@ -365,12 +365,20 @@ export const addExperience = async (req: Request, res: Response) => {
     }
 
     // validating description
-    if (!description || typeof description !== "string")
+    if (description && typeof description !== "string")
       return throwError({
         message: "Description must be non empty text",
         res,
         status: 400,
       });
+
+    //creating experienceCertification object
+    const experienceCertification = new ExperienceCertification();
+    experienceCertification.user = user;
+    experienceCertification.name = name;
+    experienceCertification.type = type;
+    experienceCertification.date = date;
+    experienceCertification.description = description;
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
