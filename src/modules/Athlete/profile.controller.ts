@@ -314,6 +314,14 @@ export const addExperience = async (req: Request, res: Response) => {
   try {
     const { user_id } = req.params;
     const { name, type, date, description } = req.body;
+
+    // validating name
+    if (!name || typeof name !== "string" || name.trim() === "")
+      return throwError({
+        message: "Name must be non empty text",
+        res,
+        status: 400,
+      });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
