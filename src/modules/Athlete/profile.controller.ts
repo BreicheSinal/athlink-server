@@ -256,6 +256,16 @@ export const addTrophy = async (req: Request, res: Response) => {
         res,
         status: 400,
       });
+
+    // validating category
+    const categories = ["athlete", "coach", "club"];
+    if (!categories.includes(category))
+      return throwError({
+        message:
+          "Invalid category. It must be one of 'athlete', 'coach', or 'club'.",
+        res,
+        status: 400,
+      });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
