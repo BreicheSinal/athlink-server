@@ -5,6 +5,7 @@ import { Athlete } from "../../db/entities/Athlete";
 import { Club } from "../../db/entities/Club";
 
 import { throwError, throwNotFound } from "../../utils/error";
+import { User } from "../../db/entities/User";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
 const clubRepository = AppDataSource.getRepository(Club);
@@ -163,6 +164,20 @@ export const editBio = async (req: Request, res: Response) => {
         res,
         status: 400,
       });
+
+    // finding athlete by id
+    const athlete = await athleteRepository.findOne({
+      where: { id: parseInt(id) },
+      relations: ["user"],
+    });
+
+    if (!athlete) {
+      return throwNotFound({
+        entity: `Athlete with id ${id}`,
+        check: true,
+        res,
+      });
+    }
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
