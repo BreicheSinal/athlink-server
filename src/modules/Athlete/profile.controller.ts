@@ -315,7 +315,10 @@ export const addTrophy = async (req: Request, res: Response) => {
   }
 };
 
-export const addExperienceCertification = async (req: Request, res: Response) => {
+export const addExperienceCertification = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const user_id = parseInt(req.params.user_id, 10);
     const { name, type, date, description } = req.body;
