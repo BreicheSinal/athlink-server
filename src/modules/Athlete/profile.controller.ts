@@ -145,6 +145,8 @@ export const editProfile = async (req: Request, res: Response) => {
 
 export const editBio = async (req: Request, res: Response) => {
   try {
+    const { id } = req.params;
+    const { bio } = req.body;
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
