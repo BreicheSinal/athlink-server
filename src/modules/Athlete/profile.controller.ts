@@ -149,13 +149,20 @@ export const editBio = async (req: Request, res: Response) => {
     const { bio } = req.body;
 
     // validating ID
-    if (!id) {
+    if (!id)
       return throwError({
         message: "ID required",
         res,
         status: 400,
       });
-    }
+
+    // validated bio input
+    if (!bio || typeof bio !== "string")
+      return throwError({
+        message: "Bio must be non empty text",
+        res,
+        status: 400,
+      });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
