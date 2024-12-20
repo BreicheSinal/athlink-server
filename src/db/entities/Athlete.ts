@@ -25,7 +25,7 @@ export class Athlete {
 
   @ManyToOne(() => Club, (club) => club.id, { nullable: true })
   @JoinColumn({ name: "club_id" })
-  club: Club;
+  club: Club | null;
 
   @Column({
     type: "varchar",
