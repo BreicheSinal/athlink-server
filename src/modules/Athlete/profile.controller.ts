@@ -192,6 +192,12 @@ export const editBio = async (req: Request, res: Response) => {
 
     user.bio = bio;
 
+    const updatedUserBio = await userRepository.save(user);
+
+    return res.status(200).json({
+      message: "User bio updated successfully",
+      athlete: updatedUserBio,
+    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
