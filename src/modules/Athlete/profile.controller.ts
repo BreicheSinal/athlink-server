@@ -266,6 +266,15 @@ export const addTrophy = async (req: Request, res: Response) => {
         res,
         status: 400,
       });
+
+    // creating trophy object
+    const trophy = new Trophy();
+    trophy.name = name;
+    trophy.description = description;
+    trophy.category = category;
+    trophy.entity_id = entity_id;
+    trophy.federation = federation;
+    trophy.verification_status = "pending";
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
