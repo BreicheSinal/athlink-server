@@ -248,6 +248,14 @@ export const addTrophy = async (req: Request, res: Response) => {
         res,
         status: 400,
       });
+
+    // validating description
+    if (!description || typeof description !== "string")
+      return throwError({
+        message: "Description must be non empty text",
+        res,
+        status: 400,
+      });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
