@@ -38,8 +38,7 @@ export class ExperienceCertification {
   type: "experience" | "certification";
 
   @Column({
-    type: "varchar",
-    length: 255,
+    type: "date",
     nullable: false,
   })
   date: string;

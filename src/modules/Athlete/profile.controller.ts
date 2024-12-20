@@ -19,6 +19,11 @@ const experienceCertificationRepository = AppDataSource.getRepository(
   ExperienceCertification
 );
 
+function validateDate(dateString: string): boolean {
+  const regex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
+  return regex.test(dateString);
+}
+
 export const editProfile = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -327,11 +332,21 @@ export const addExperience = async (req: Request, res: Response) => {
     const types = ["experience", "certification"];
     if (!types.includes(type))
       return throwError({
-        message:
-          "Invalid type. It must be 'experience' or 'certification'.",
+        message: "Invalid type. It must be 'experience' or 'certification'.",
         res,
         status: 400,
       });
+
+    // validating date
+    if (!validateDate(date)) {
+      return throwError({
+        message: "Invalid date format",
+        res,
+        status: 400,
+      });
+    }
+
+    
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
