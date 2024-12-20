@@ -25,20 +25,20 @@ export class Athlete {
 
   @ManyToOne(() => Club, (club) => club.id, { nullable: true })
   @JoinColumn({ name: "club_id" })
-  club?: Club | null;
+  club: Club | null;
 
   @Column({
     type: "varchar",
     length: 255,
     nullable: true,
   })
-  position?: string;
+  position: string | null;
 
   @Column({
     type: "int",
     nullable: true,
   })
-  age?: number;
+  age: number | null;
 
   @Column({
     type: "decimal",
@@ -46,7 +46,7 @@ export class Athlete {
     scale: 2,
     nullable: true,
   })
-  height?: number;
+  height: number | null;
 
   @Column({
     type: "decimal",
@@ -54,7 +54,7 @@ export class Athlete {
     scale: 2,
     nullable: true,
   })
-  weight?: number;
+  weight: number | null;
 
   @CreateDateColumn({ type: "datetime" })
   created_at: Date;

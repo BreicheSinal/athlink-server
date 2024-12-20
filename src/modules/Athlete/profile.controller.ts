@@ -23,6 +23,13 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
+    if (position == 0 || age == 0 || height == 0 || club_id == 0)
+      return throwError({
+        message: "Fields cannot be equal to 0",
+        res,
+        status: 400,
+      });
+
     // validating position
     if (position && typeof position !== "string") {
       return throwError({
@@ -64,8 +71,8 @@ export const editProfile = async (req: Request, res: Response) => {
       weight &&
       (typeof weight !== "number" ||
         isNaN(weight) ||
-        height <= 0 ||
-        height > 500)
+        weight <= 0 ||
+        weight > 500)
     ) {
       return throwError({
         message: "Weight must be a number ( > 0 || < 500)",
@@ -75,15 +82,23 @@ export const editProfile = async (req: Request, res: Response) => {
     }
 
     // validating club
-    if (club_id && club_id !== null) {
-      const club = await clubRepository.findOne({ where: { id: club_id } });
-
-      if (!club) {
-        return throwNotFound({
-          entity: `Club with id ${club_id}`,
-          check: true,
+    if (club_id) {
+      if (typeof club_id !== "number" || isNaN(club_id) || club_id <= 0) {
+        return throwError({
+          message: "Club id must be a number",
           res,
+          status: 400,
         });
+      } else if (club_id !== null) {
+        const club = await clubRepository.findOne({ where: { id: club_id } });
+
+        if (!club) {
+          return throwNotFound({
+            entity: `Club with id ${club_id}`,
+            check: true,
+            res,
+          });
+        }
       }
     }
 
