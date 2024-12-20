@@ -209,7 +209,7 @@ export const editBio = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: "User bio updated successfully",
-      athlete: updatedUserBio,
+      bio: updatedUserBio,
     });
   } catch (error: unknown) {
     const errorMessage =
@@ -302,7 +302,7 @@ export const addTrophy = async (req: Request, res: Response) => {
 
     return res.status(201).json({
       message: "Trophy created successfully",
-      athlete: createdTrophy,
+      trophy: createdTrophy,
     });
   } catch (error: unknown) {
     const errorMessage =
@@ -315,7 +315,7 @@ export const addTrophy = async (req: Request, res: Response) => {
   }
 };
 
-export const addExperience = async (req: Request, res: Response) => {
+export const addExperienceCertification = async (req: Request, res: Response) => {
   try {
     const user_id = parseInt(req.params.user_id, 10);
     const { name, type, date, description } = req.body;
@@ -372,13 +372,22 @@ export const addExperience = async (req: Request, res: Response) => {
         status: 400,
       });
 
-    //creating experienceCertification object
+    // creating experienceCertification object
     const experienceCertification = new ExperienceCertification();
     experienceCertification.user = user;
     experienceCertification.name = name;
     experienceCertification.type = type;
     experienceCertification.date = date;
-    experienceCertification.description = description;
+    experienceCertification.description = description ? description : null;
+
+    // saving object in db
+    const createdExperienceCertification =
+      await experienceCertificationRepository.save(experienceCertification);
+
+    return res.status(201).json({
+      message: "Trophy created successfully",
+      athlete: createdExperienceCertification,
+    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
