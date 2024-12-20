@@ -16,51 +16,51 @@ export class Trophy {
     type: "bigint",
     unsigned: true,
   })
-  id!: number;
+  id: number;
 
   @Column({
     type: "varchar",
     length: 255,
   })
-  name!: string;
-
-  @Column({
-    type: "enum",
-    enum: ["athlete", "coach", "club"],
-  })
-  category!: "athlete" | "coach" | "club";
-
-  @Column({ type: "bigint" })
-  entityId!: number;
-
-  @ManyToOne(() => Federation, (federation) => federation.id)
-  @JoinColumn({ name: "federation_id" })
-  federation!: Federation;
-
-  @Column({
-    type: "enum",
-    enum: ["pending", "verified", "rejected"],
-  })
-  verificationStatus!: "pending" | "verified" | "rejected";
-
-  @CreateDateColumn({ type: "datetime" })
-  requestedAt!: Date;
-
-  @Column({
-    type: "datetime",
-    nullable: true,
-  })
-  approvedAt?: Date;
+  name: string;
 
   @Column({
     type: "text",
     nullable: true,
   })
-  description?: string;
+  description: string | null;
+
+  @Column({
+    type: "enum",
+    enum: ["athlete", "coach", "club"],
+  })
+  category: "athlete" | "coach" | "club";
+
+  @Column({ type: "bigint" })
+  entity_id: number;
+
+  @ManyToOne(() => Federation, (federation) => federation.id)
+  @JoinColumn({ name: "federation_id" })
+  federation: Federation;
+
+  @Column({
+    type: "enum",
+    enum: ["pending", "verified", "rejected"],
+  })
+  verification_status: "pending" | "verified" | "rejected";
 
   @CreateDateColumn({ type: "datetime" })
-  createdAt!: Date;
+  requested_at: Date;
+
+  @Column({
+    type: "datetime",
+    nullable: true,
+  })
+  approved_at: Date | null;
+
+  @CreateDateColumn({ type: "datetime" })
+  created_at: Date;
 
   @UpdateDateColumn({ type: "datetime" })
-  updatedAt!: Date;
+  updated_at: Date;
 }
