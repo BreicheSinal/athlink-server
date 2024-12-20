@@ -74,6 +74,7 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
+    // validating club
     if (club_id && club_id !== null) {
       const club = await clubRepository.findOne({ where: { id: club_id } });
 
@@ -100,17 +101,15 @@ export const editProfile = async (req: Request, res: Response) => {
     }
 
     // updating fields
-    if (position) athlete.position = position;
-    if (age) athlete.age = age;
-    if (height) athlete.height = height;
-    if (weight) athlete.weight = weight;
+    athlete.position = position == null ? null : position;
+    athlete.age = age == null ? null : age;
+    athlete.height = height == null ? null : height;
+    athlete.weight = weight === null ? null : weight;
 
-    if (club_id === null) {
-      athlete.club = null;
-    } else {
-      const club = await clubRepository.findOne({ where: { id: club_id } });
-      athlete.club = club;
-    }
+    athlete.club =
+      club_id === null
+        ? null
+        : await clubRepository.findOne({ where: { id: club_id } });
 
     const updatedAthlete = await athleteRepository.save(athlete);
 
