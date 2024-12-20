@@ -275,6 +275,14 @@ export const addTrophy = async (req: Request, res: Response) => {
     trophy.entity_id = entity_id;
     trophy.federation = federation;
     trophy.verification_status = "pending";
+
+    // saving trophy in db
+    const createdTrophy = await trophyRepository.save(trophy);
+
+    return res.status(201).json({
+      message: "Trophy created successfully",
+      athlete: createdTrophy,
+    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
