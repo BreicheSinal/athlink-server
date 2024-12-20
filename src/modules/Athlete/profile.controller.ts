@@ -9,6 +9,7 @@ import { User } from "../../db/entities/User";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
 const clubRepository = AppDataSource.getRepository(Club);
+const userRepository = AppDataSource.getRepository(User);
 
 export const editProfile = async (req: Request, res: Response) => {
   try {
@@ -178,6 +179,19 @@ export const editBio = async (req: Request, res: Response) => {
         res,
       });
     }
+
+    // updating user bio
+    const user = athlete.user;
+
+    if (!user)
+      return throwNotFound({
+        entity: `User associated with athlete of id ${id} not found`,
+        check: true,
+        res,
+      });
+
+    user.bio = bio;
+
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
