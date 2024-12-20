@@ -216,8 +216,21 @@ export const editBio = async (req: Request, res: Response) => {
 export const addTrophy = async (req: Request, res: Response) => {
   try {
     // taken on user id (case: athlete-coach user | when project is scaled)
-    const entity_id = parseInt(req.params.entity_id, 10); 
+    const entity_id = parseInt(req.params.entity_id, 10);
     const { name, description, category, federation_id } = req.body;
+
+    // finding federation by id
+    const federation = await federationRepository.findOne({
+      where: { id: parseInt(federation_id, 10) },
+    });
+
+    if (!federation) {
+      return throwNotFound({
+        entity: `Federation with id ${federation_id} not found`,
+        check: true,
+        res,
+      });
+    }
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
