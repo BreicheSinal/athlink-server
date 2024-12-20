@@ -6,6 +6,7 @@ import { Club } from "../../db/entities/Club";
 import { User } from "../../db/entities/User";
 import { Trophy } from "../../db/entities/Trophy";
 import { Federation } from "../../db/entities/Federation";
+import { ExperienceCertification } from "../../db/entities/ExperienceCertification";
 
 import { throwError, throwNotFound } from "../../utils/error";
 
@@ -14,6 +15,9 @@ const clubRepository = AppDataSource.getRepository(Club);
 const userRepository = AppDataSource.getRepository(User);
 const trophyRepository = AppDataSource.getRepository(Trophy);
 const federationRepository = AppDataSource.getRepository(Federation);
+const experienceCertificationRepository = AppDataSource.getRepository(
+  ExperienceCertification
+);
 
 export const editProfile = async (req: Request, res: Response) => {
   try {
@@ -308,6 +312,8 @@ export const addTrophy = async (req: Request, res: Response) => {
 
 export const addExperience = async (req: Request, res: Response) => {
   try {
+    const { user_id } = req.params;
+    const { name, type, date, description } = req.body;
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
