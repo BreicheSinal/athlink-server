@@ -306,7 +306,7 @@ export const addTrophy = async (req: Request, res: Response) => {
   }
 };
 
-export const editExperience = async (req: Request, res: Response) => {
+export const addExperience = async (req: Request, res: Response) => {
   try {
   } catch (error: unknown) {
     const errorMessage =

@@ -17,39 +17,41 @@ export class ExperienceCertification {
     type: "bigint",
     unsigned: true,
   })
-  id!: number;
+  id: number;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { nullable: false })
   @JoinColumn({ name: "user_id" })
-  user!: User;
+  user: User;
 
   @Column({
     type: "varchar",
     length: 255,
+    nullable: false,
   })
-  name!: string;
+  name: string;
 
   @Column({
     type: "enum",
     enum: ["experience", "certification"],
+    nullable: false,
   })
-  type!: "experience" | "certification";
+  type: "experience" | "certification";
 
   @Column({
     type: "varchar",
     length: 255,
+    nullable: false,
   })
-  date!: string;
+  date: string;
 
   @Column({
     type: "text",
-    nullable: true,
   })
-  description?: string;
+  description: string | null;
 
   @CreateDateColumn({ type: "datetime" })
-  createdAt!: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: "datetime" })
-  updatedAt!: Date;
+  updated_at: Date;
 }
