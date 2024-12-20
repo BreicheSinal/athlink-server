@@ -219,14 +219,26 @@ export const addTrophy = async (req: Request, res: Response) => {
     const entity_id = parseInt(req.params.entity_id, 10);
     const { name, description, category, federation_id } = req.body;
 
+    // validating federation id
+    if (
+      !federation_id ||
+      typeof federation_id !== "number" ||
+      federation_id <= 0
+    )
+      return throwError({
+        message: "Federation id must be a valid number",
+        res,
+        status: 400,
+      });
+
     // finding federation by id
     const federation = await federationRepository.findOne({
-      where: { id: parseInt(federation_id, 10) },
+      where: { id: federation_id },
     });
 
     if (!federation) {
       return throwNotFound({
-        entity: `Federation with id ${federation_id} not found`,
+        entity: `Federation with id ${federation_id}`,
         check: true,
         res,
       });
