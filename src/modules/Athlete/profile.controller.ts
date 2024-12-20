@@ -322,6 +322,16 @@ export const addExperience = async (req: Request, res: Response) => {
         res,
         status: 400,
       });
+
+    // validating type
+    const types = ["experience", "certification"];
+    if (!types.includes(type))
+      return throwError({
+        message:
+          "Invalid type. It must be 'experience' or 'certification'.",
+        res,
+        status: 400,
+      });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
