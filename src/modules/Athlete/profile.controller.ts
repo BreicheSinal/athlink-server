@@ -241,7 +241,13 @@ export const addTrophy = async (req: Request, res: Response) => {
       });
     }
 
-
+    // validating name
+    if (!name || typeof name !== "string" || name.trim() === "")
+      return throwError({
+        message: "Name must be non empty text",
+        res,
+        status: 400,
+      });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
