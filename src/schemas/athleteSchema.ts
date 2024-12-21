@@ -34,5 +34,20 @@ export const editBioSchema = z.object({
     .max(500, "Bio must be at most 500 characters"),
 });
 
+export const addTrophySchema = z.object({
+  name: z.string().min(1, "Name must be non empty text"),
+  description: z.string().min(1, "Description must be non empty text"),
+  category: z.enum(["athlete", "coach", "club"], {
+    errorMap: () => ({
+      message: "Category must be 'athlete', 'coach', or 'club'",
+    }),
+  }),
+  federation_id: z
+    .number()
+    .positive("Federation id must be a valid number")
+    .min(1, "Federation id must be greater than 0"),
+});
+
+export type AddTrophyInput = z.infer<typeof addTrophySchema>;
 export type EditBioInput = z.infer<typeof editBioSchema>;
 export type EditProfileInput = z.infer<typeof editProfileSchema>;
