@@ -16,6 +16,8 @@ import {
   EditBioInput,
   addTrophySchema,
   AddTrophyInput,
+  addExperienceCertificationSchema,
+  AddExperienceCertificationInput,
 } from "../../schemas/athleteSchema";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
@@ -260,60 +262,40 @@ export const addExperienceCertification = async (
   res: Response
 ) => {
   try {
-    const user_id = parseInt(req.params.user_id, 10);
-    const { name, type, date, description } = req.body;
+    const { user_id } = req.params;
 
     // validating user id
-    if (!user_id || typeof user_id !== "number" || user_id <= 0)
+    const parsedUserId = parseInt(user_id, 10);
+    if (isNaN(parsedUserId) || parsedUserId <= 0) {
       return throwError({
-        message: "User id must be a valid number",
+        message: "User ID must be a valid positive number",
         res,
         status: 400,
       });
+    }
+    // validating body based on zod
+    const result = addExperienceCertificationSchema.safeParse(req.body);
 
-    const user = await userRepository.findOne({ where: { id: user_id } });
+    if (!result.success) {
+      return throwError({
+        message: "Validation error",
+        res,
+        status: 400,
+        details: result.error.format(),
+      });
+    }
+    const { name, type, date, description }: AddExperienceCertificationInput =
+      result.data;
+
+    const user = await userRepository.findOne({ where: { id: parsedUserId } });
 
     if (!user) {
       return throwNotFound({
-        entity: `Federation with id ${user}`,
+        entity: `User with id ${user}`,
         check: true,
         res,
       });
     }
-
-    // validating name
-    if (!name || typeof name !== "string" || name.trim() === "")
-      return throwError({
-        message: "Name must be non empty text",
-        res,
-        status: 400,
-      });
-
-    // validating type
-    const types = ["experience", "certification"];
-    if (!types.includes(type))
-      return throwError({
-        message: "Invalid type. It must be 'experience' or 'certification'.",
-        res,
-        status: 400,
-      });
-    /*
-    // validating date
-    if (!validateDate(date)) {
-      return throwError({
-        message: "Invalid date format",
-        res,
-        status: 400,
-      });
-    }*/
-
-    // validating description
-    if (description && typeof description !== "string")
-      return throwError({
-        message: "Description must be non empty text",
-        res,
-        status: 400,
-      });
 
     // creating experienceCertification object
     const experienceCertification = new ExperienceCertification();
