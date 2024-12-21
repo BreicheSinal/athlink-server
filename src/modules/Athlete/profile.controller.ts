@@ -14,6 +14,8 @@ import {
   EditProfileInput,
   editBioSchema,
   EditBioInput,
+  addTrophySchema,
+  AddTrophyInput,
 } from "../../schemas/athleteSchema";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
@@ -187,20 +189,31 @@ export const editBio = async (req: Request, res: Response) => {
 export const addTrophy = async (req: Request, res: Response) => {
   try {
     // taken on user id (case: athlete-coach user | when project is scaled)
-    const entity_id = parseInt(req.params.entity_id, 10);
-    const { name, description, category, federation_id } = req.body;
+    const { entity_id } = req.params;
 
-    // validating federation id
-    if (
-      !federation_id ||
-      typeof federation_id !== "number" ||
-      federation_id <= 0
-    )
+    const parsedEntityId = parseInt(entity_id, 10);
+    if (isNaN(parsedEntityId) || parsedEntityId <= 0) {
       return throwError({
-        message: "Federation id must be a valid number",
+        message: `Invalid entity_id: ${entity_id}`,
         res,
         status: 400,
       });
+    }
+
+    // validating body using zod
+    const result = addTrophySchema.safeParse(req.body);
+
+    if (!result.success) {
+      return throwError({
+        message: "Validation error",
+        res,
+        status: 400,
+        details: result.error.format(),
+      });
+    }
+
+    const { name, description, category, federation_id }: AddTrophyInput =
+      result.data;
 
     // finding federation by id
     const federation = await federationRepository.findOne({
@@ -215,47 +228,12 @@ export const addTrophy = async (req: Request, res: Response) => {
       });
     }
 
-    // validating entity id
-    if (isNaN(entity_id)) {
-      return throwNotFound({
-        entity: `Invalid entity_id: ${req.params.entity_id}`,
-        check: true,
-        res,
-      });
-    }
-
-    // validating name
-    if (!name || typeof name !== "string" || name.trim() === "")
-      return throwError({
-        message: "Name must be non empty text",
-        res,
-        status: 400,
-      });
-
-    // validating description
-    if (!description || typeof description !== "string")
-      return throwError({
-        message: "Description must be non empty text",
-        res,
-        status: 400,
-      });
-
-    // validating category
-    const categories = ["athlete", "coach", "club"];
-    if (!categories.includes(category))
-      return throwError({
-        message:
-          "Invalid category. It must be one of 'athlete', 'coach', or 'club'.",
-        res,
-        status: 400,
-      });
-
     // creating trophy object
     const trophy = new Trophy();
     trophy.name = name;
     trophy.description = description;
     trophy.category = category;
-    trophy.entity_id = entity_id;
+    trophy.entity_id = parsedEntityId;
     trophy.federation = federation;
     trophy.verification_status = "pending";
 
