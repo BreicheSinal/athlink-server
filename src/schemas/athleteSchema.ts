@@ -27,4 +27,12 @@ export const editProfileSchema = z.object({
     .optional(),
 });
 
+export const editBioSchema = z.object({
+  bio: z
+    .string()
+    .min(1, "Bio must be at least 1 character long")
+    .max(500, "Bio must be at most 500 characters"),
+});
+
+export type EditBioInput = z.infer<typeof editBioSchema>;
 export type EditProfileInput = z.infer<typeof editProfileSchema>;
