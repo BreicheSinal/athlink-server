@@ -12,6 +12,8 @@ import { throwError, throwNotFound } from "../../utils/error";
 import {
   editProfileSchema,
   EditProfileInput,
+  editBioSchema,
+  EditBioInput,
 } from "../../schemas/athleteSchema";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
@@ -116,7 +118,6 @@ export const editProfile = async (req: Request, res: Response) => {
 export const editBio = async (req: Request, res: Response) => {
   try {
     const { id } = req.params; //athlete id
-    const { bio } = req.body;
 
     // validating ID
     if (!id)
@@ -126,13 +127,19 @@ export const editBio = async (req: Request, res: Response) => {
         status: 400,
       });
 
-    // validated bio input
-    if (!bio || typeof bio !== "string")
+    // validating body using zod
+    const result = editBioSchema.safeParse(req.body);
+
+    if (!result.success) {
       return throwError({
-        message: "Bio must be non empty text",
+        message: "Validation error",
         res,
         status: 400,
+        details: result.error.format(),
       });
+    }
+
+    const { bio }: EditBioInput = result.data;
 
     // finding athlete by id
     const athlete = await athleteRepository.findOne({
