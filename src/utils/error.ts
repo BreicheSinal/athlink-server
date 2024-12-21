@@ -6,6 +6,7 @@ interface ThrowErrorParams {
     };
   };
   status?: number;
+  details?: any;
 }
 
 interface ThrowNotFoundParams {
@@ -22,9 +23,11 @@ export const throwError = ({
   message,
   res,
   status = 500,
+  details,
 }: ThrowErrorParams): void => {
   res.status(status).send({
     message: message || "Internal Server Error",
+    details: details || null,
   });
 };
 
