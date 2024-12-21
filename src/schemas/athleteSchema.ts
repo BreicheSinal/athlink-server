@@ -27,12 +27,16 @@ export const editProfileSchema = z.object({
     .optional(),
 });
 
+export type EditProfileInput = z.infer<typeof editProfileSchema>;
+
 export const editBioSchema = z.object({
   bio: z
     .string()
     .min(1, "Bio must be at least 1 character long")
     .max(500, "Bio must be at most 500 characters"),
 });
+
+export type EditBioInput = z.infer<typeof editBioSchema>;
 
 export const addTrophySchema = z.object({
   name: z.string().min(1, "Name must be non empty text"),
@@ -49,5 +53,20 @@ export const addTrophySchema = z.object({
 });
 
 export type AddTrophyInput = z.infer<typeof addTrophySchema>;
-export type EditBioInput = z.infer<typeof editBioSchema>;
-export type EditProfileInput = z.infer<typeof editProfileSchema>;
+
+export const addExperienceCertificationSchema = z.object({
+  name: z.string().min(1, "Name must be non empty text"),
+  type: z.enum(["experience", "certification"], {
+    errorMap: () => ({
+      message: "Type must be 'experience' or 'certification'",
+    }),
+  }),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in the format YYYY-MM-DD"),
+  description: z.string().optional(),
+});
+
+export type AddExperienceCertificationInput = z.infer<
+  typeof addExperienceCertificationSchema
+>;
