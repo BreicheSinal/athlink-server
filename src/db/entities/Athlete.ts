@@ -54,7 +54,7 @@ export class Athlete {
     scale: 2,
     nullable: true,
   })
-  weight: number | null;
+  weight?: number | null;
 
   @CreateDateColumn({ type: "datetime" })
   created_at: Date;

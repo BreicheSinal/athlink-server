@@ -9,6 +9,10 @@ import { Federation } from "../../db/entities/Federation";
 import { ExperienceCertification } from "../../db/entities/ExperienceCertification";
 
 import { throwError, throwNotFound } from "../../utils/error";
+import {
+  editProfileSchema,
+  EditProfileInput,
+} from "../../schemas/athleteSchema";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
 const clubRepository = AppDataSource.getRepository(Club);
@@ -19,15 +23,9 @@ const experienceCertificationRepository = AppDataSource.getRepository(
   ExperienceCertification
 );
 
-function validateDate(dateString: string): boolean {
-  const regex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
-  return regex.test(dateString);
-}
-
 export const editProfile = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { position, age, height, weight, club_id } = req.body;
 
     // validating ID
     if (!id) {
@@ -38,88 +36,33 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
-    if (position == 0 || age == 0 || height == 0 || club_id == 0)
+    const parsedId = parseInt(id);
+    if (isNaN(parsedId) || parsedId <= 0) {
       return throwError({
-        message: "Fields cannot be equal to 0",
-        res,
-        status: 400,
-      });
-
-    // validating position
-    if (position && typeof position !== "string") {
-      return throwError({
-        message: "Position must be a string",
+        message: "ID must be a positive integer",
         res,
         status: 400,
       });
     }
 
-    // validating age
-    if (
-      age &&
-      (typeof age !== "number" || isNaN(age) || age <= 0 || age > 120)
-    ) {
+    // validating body based on zod
+    const result = editProfileSchema.safeParse(req.body);
+
+    if (!result.success) {
       return throwError({
-        message: "Age must be a number ( > 0 || < 300)",
+        message: "Validation error",
         res,
         status: 400,
+        details: result.error.format(),
       });
     }
 
-    // validating height
-    if (
-      height &&
-      (typeof height !== "number" ||
-        isNaN(height) ||
-        height <= 0 ||
-        height > 300)
-    ) {
-      return throwError({
-        message: "Height must be a number ( > 0 || < 300)",
-        res,
-        status: 400,
-      });
-    }
-
-    // validating weight
-    if (
-      weight &&
-      (typeof weight !== "number" ||
-        isNaN(weight) ||
-        weight <= 0 ||
-        weight > 500)
-    ) {
-      return throwError({
-        message: "Weight must be a number ( > 0 || < 500)",
-        res,
-        status: 400,
-      });
-    }
-
-    // validating club
-    if (club_id) {
-      if (typeof club_id !== "number" || isNaN(club_id) || club_id <= 0) {
-        return throwError({
-          message: "Club id must be a number",
-          res,
-          status: 400,
-        });
-      } else if (club_id !== null) {
-        const club = await clubRepository.findOne({ where: { id: club_id } });
-
-        if (!club) {
-          return throwNotFound({
-            entity: `Club with id ${club_id}`,
-            check: true,
-            res,
-          });
-        }
-      }
-    }
+    const { position, age, height, weight, club_id }: EditProfileInput =
+      result.data;
 
     // finding athlete by id
     const athlete = await athleteRepository.findOne({
-      where: { id: parseInt(id) },
+      where: { id: parsedId },
     });
 
     if (!athlete) {
@@ -130,17 +73,29 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
+    // validating club
+    if (club_id !== null && club_id !== undefined) {
+      const club = await clubRepository.findOne({ where: { id: club_id } });
+
+      if (!club) {
+        return throwNotFound({
+          entity: `Club with id ${club_id}`,
+          check: true,
+          res,
+        });
+      }
+      athlete.club = club;
+    } else {
+      athlete.club = null;
+    }
+
     // updating fields
     athlete.position = position == null ? null : position;
     athlete.age = age == null ? null : age;
     athlete.height = height == null ? null : height;
     athlete.weight = weight === null ? null : weight;
 
-    athlete.club =
-      club_id === null
-        ? null
-        : await clubRepository.findOne({ where: { id: club_id } });
-
+    // saved updated athlete
     const updatedAthlete = await athleteRepository.save(athlete);
 
     return res.status(200).json({
@@ -357,7 +312,7 @@ export const addExperienceCertification = async (
         res,
         status: 400,
       });
-
+    /*
     // validating date
     if (!validateDate(date)) {
       return throwError({
@@ -365,7 +320,7 @@ export const addExperienceCertification = async (
         res,
         status: 400,
       });
-    }
+    }*/
 
     // validating description
     if (description && typeof description !== "string")
