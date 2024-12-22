@@ -27,9 +27,12 @@ export const editProfileSchema = z.object({
     .nullable()
     .optional(),
 
-  // club
+  // club | federation
   location: z.string().max(255).optional(),
   founded_year: z.number().int().positive().optional(),
+
+  // federation
+  country: z.string().max(100).optional(),
 });
 
 export type EditProfileInput = z.infer<typeof editProfileSchema>;
