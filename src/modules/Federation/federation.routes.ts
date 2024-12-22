@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { editProfile } from "./federation.controller";
+import { editProfile, editBio } from "./federation.controller";
 
 const router = Router();
 
 router.put("/editProfile/:id", editProfile as any);
+router.put("/editBio/:id", editBio as any);
 
 export default router;

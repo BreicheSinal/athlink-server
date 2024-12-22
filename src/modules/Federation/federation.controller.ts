@@ -124,7 +124,7 @@ export const editBio = async (req: Request, res: Response) => {
 
     if (!federation) {
       return throwNotFound({
-        entity: `Athlete with id ${id}`,
+        entity: `Federation with id ${id}`,
         check: true,
         res,
       });
@@ -145,7 +145,7 @@ export const editBio = async (req: Request, res: Response) => {
     const updatedUserBio = await userRepository.save(user);
 
     return res.status(200).json({
-      message: "User bio updated successfully",
+      message: "Federation bio updated successfully",
       bio: updatedUserBio,
     });
   } catch (error: unknown) {
