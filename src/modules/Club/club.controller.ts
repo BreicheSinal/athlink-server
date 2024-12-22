@@ -144,7 +144,7 @@ export const editBio = async (req: Request, res: Response) => {
     const updatedUserBio = await userRepository.save(user);
 
     return res.status(200).json({
-      message: "User bio updated successfully",
+      message: "Club bio updated successfully",
       bio: updatedUserBio,
     });
   } catch (error: unknown) {
