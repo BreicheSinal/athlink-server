@@ -32,9 +32,50 @@ export const verifyTrophy = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
 
-    throwError({ 
-        message: "Failed to verify trophy", 
-        res 
+    throwError({
+      message: "Failed to verify trophy",
+      res,
+    });
+  }
+};
+
+export const getTrophyById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const numericId = Number(id);
+    if (isNaN(numericId) || numericId < 0) {
+      throwError({
+        message: "Invalid trophy ID",
+        res,
+        status: 400,
+      });
+      return;
+    }
+
+    const trophy = await trophyService.getTrophyById(numericId);
+
+    if (!trophy) {
+      throwNotFound({
+        entity: "Trophy",
+        res,
+      });
+      return;
+    }
+
+    const serializedTrophy = JSON.parse(
+      JSON.stringify(trophy, (key, value) =>
+        typeof value === "bigint" ? value.toString() : value
+      )
+    );
+
+    res.json(serializedTrophy);
+  } catch (error) {
+    console.error(error);
+
+    throwError({
+      message: "Failed to get trophy",
+      res,
     });
   }
 };
