@@ -161,7 +161,7 @@ export const editBio = async (req: Request, res: Response) => {
 
 export const getClubs = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; //club id
+    const { id } = req.params; // federation id
 
     // validating ID
     if (!id)
@@ -180,7 +180,7 @@ export const getClubs = async (req: Request, res: Response) => {
       });
     }
 
-    // fetching club by ID
+    // fetching clubs having same federation id
     const clubs = await clubRepository.find({
       where: { federation: { id: parsedId } },
     });
@@ -194,8 +194,8 @@ export const getClubs = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({
-      message: "Staff fetched successfully",
-      coaches: clubs,
+      message: "Clubs fetched successfully",
+      clubs: clubs,
     });
   } catch (error: unknown) {
     const errorMessage =
