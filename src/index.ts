@@ -6,6 +6,7 @@ import auth from "./modules/Auth/auth.routes";
 import athlete from "./modules/Athlete/profile.routes";
 import trophy from "./modules/Trophy/trophy.routes";
 import club from "./modules/Club/club.routes";
+import federation from "./modules/Federation/federation.routes";
 
 const app: Express = express();
 
@@ -17,6 +18,7 @@ app.use("/", auth);
 app.use("/athlete", athlete);
 app.use("/", trophy);
 app.use("/club", club);
+app.use("/federation", federation);
 
 app.listen(process.env.SERVER_PORT, async () => {
   console.log(`Server running at http://localhost:${process.env.SERVER_PORT}`);
