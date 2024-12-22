@@ -121,7 +121,7 @@ export const editBio = async (req: Request, res: Response) => {
 
     if (!club) {
       return throwNotFound({
-        entity: `Athlete with id ${id}`,
+        entity: `Club with id ${id}`,
         check: true,
         res,
       });
