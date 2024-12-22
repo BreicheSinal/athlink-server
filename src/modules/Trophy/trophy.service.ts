@@ -59,4 +59,17 @@ export class TrophyService {
       throw error;
     }
   }
+
+  // function to get all trophies owned by an address
+  async getTrophiesByOwner(ownerAddress: string): Promise<Trophy[]> {
+    try {
+      const trophyIds = await contract.getTrophiesByOwner(ownerAddress);
+      return Promise.all(
+        trophyIds.map((id: bigint) => this.getTrophyById(Number(id)))
+      );
+    } catch (error) {
+      console.error("Error getting trophies by owner:", error);
+      throw error;
+    }
+  }
 }
