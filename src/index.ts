@@ -5,6 +5,7 @@ import "reflect-metadata";
 import auth from "./modules/Auth/auth.routes";
 import athlete from "./modules/Athlete/profile.routes";
 import trophy from "./modules/Trophy/trophy.routes";
+import club from "./modules/Club/club.routes";
 
 const app: Express = express();
 
@@ -13,8 +14,9 @@ init(app);
 app.use(express.json());
 
 app.use("/", auth);
-app.use("/", athlete);
+app.use("/athlete", athlete);
 app.use("/", trophy);
+app.use("/club", club);
 
 app.listen(process.env.SERVER_PORT, async () => {
   console.log(`Server running at http://localhost:${process.env.SERVER_PORT}`);
