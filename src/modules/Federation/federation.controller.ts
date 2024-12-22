@@ -52,7 +52,7 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
-    const { location, founded_year }: EditProfileInput = result.data;
+    const { location, founded_year, country }: EditProfileInput = result.data;
 
     // finding federation by id
     const federation = await federationRepository.findOne({
@@ -69,6 +69,7 @@ export const editProfile = async (req: Request, res: Response) => {
 
     // updating fields
     federation.location = location == null ? null : location;
+    federation.country = country == null ? null : country;
     federation.founded_year = founded_year == null ? null : founded_year;
 
     // saved updated federation
