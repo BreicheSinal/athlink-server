@@ -17,6 +17,7 @@ export class FederationType {
   @Column({
     type: "varchar",
     length: 100,
+    nullable: false,
   })
   type_name: string;
 
