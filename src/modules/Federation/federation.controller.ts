@@ -90,6 +90,73 @@ export const editProfile = async (req: Request, res: Response) => {
   }
 };
 
-export const editBio = async (req: Request, res: Response) => {};
+export const editBio = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params; //federation id
+
+    // validating ID
+    if (!id)
+      return throwError({
+        message: "ID required",
+        res,
+        status: 400,
+      });
+
+    // validating body using zod
+    const result = editBioSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return throwError({
+        message: "Validation error",
+        res,
+        status: 400,
+        details: result.error.format(),
+      });
+    }
+
+    const { bio }: EditBioInput = result.data;
+
+    // finding federation by id
+    const federation = await federationRepository.findOne({
+      where: { id: parseInt(id) },
+      relations: ["user"],
+    });
+
+    if (!federation) {
+      return throwNotFound({
+        entity: `Athlete with id ${id}`,
+        check: true,
+        res,
+      });
+    }
+
+    // updating user bio
+    const user = federation.user;
+
+    if (!user)
+      return throwNotFound({
+        entity: `User associated with federation of id ${id} not found`,
+        check: true,
+        res,
+      });
+
+    user.bio = bio;
+
+    const updatedUserBio = await userRepository.save(user);
+
+    return res.status(200).json({
+      message: "User bio updated successfully",
+      bio: updatedUserBio,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
 
 export const getClubs = async (req: Request, res: Response) => {};
