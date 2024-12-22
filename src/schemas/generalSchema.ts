@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const editProfileSchema = z.object({
+  // athlete
   position: z.string().nullable().optional(),
   age: z
     .number()
@@ -25,6 +26,10 @@ export const editProfileSchema = z.object({
     .positive("Club ID must be a positive number")
     .nullable()
     .optional(),
+
+  // club
+  location: z.string().max(255).optional(),
+  founded_year: z.number().int().positive().optional(),
 });
 
 export type EditProfileInput = z.infer<typeof editProfileSchema>;

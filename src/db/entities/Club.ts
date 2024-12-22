@@ -27,14 +27,14 @@ export class Club {
     length: 255,
     nullable: true,
   })
-  location: string;
+  location: string | null;
 
   @Column({
     type: "int",
     unsigned: true,
     nullable: true,
   })
-  founded_year: number;
+  founded_year: number | null;
 
   @CreateDateColumn({ type: "datetime" })
   created_at: Date;
