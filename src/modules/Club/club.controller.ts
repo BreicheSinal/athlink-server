@@ -184,9 +184,9 @@ export const getStaff = async (req: Request, res: Response) => {
       where: { club: { id: parsedId } },
     });
 
-    if (!staff) {
+    if (staff.length === 0) {
       return throwNotFound({
-        entity: `Staff with id ${id}`,
+        entity: `Staff with club id ${id}`,
         check: true,
         res,
       });
