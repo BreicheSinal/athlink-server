@@ -183,7 +183,13 @@ export const getStaff = async (req: Request, res: Response) => {
       relations: ["coaches"],
     });
 
-    
+    if (!club) {
+      return throwNotFound({
+        entity: `Club with id ${id}`,
+        check: true,
+        res,
+      });
+    }
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
