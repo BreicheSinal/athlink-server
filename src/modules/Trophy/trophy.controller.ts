@@ -79,3 +79,36 @@ export const getTrophyById = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getTrophiesByOwner = async (req: Request, res: Response) => {
+  try {
+    const { address } = req.params;
+
+    const trophies = await trophyService.getTrophiesByOwner(address);
+
+    if (!trophies || trophies.length === 0) {
+      throwNotFound({ 
+        entity: "Trophies for this owner",
+        res 
+    });
+      return;
+    }
+
+    const serializedTrophies = trophies.map((trophy: any) => {
+      return JSON.parse(
+        JSON.stringify(trophy, (key, value) =>
+          typeof value === "bigint" ? value.toString() : value
+        )
+      );
+    });
+
+    res.json(serializedTrophies);
+  } catch (error) {
+    console.error(error);
+
+    throwError({
+      message: "Failed to get trophies",
+      res,
+    });
+  }
+};
