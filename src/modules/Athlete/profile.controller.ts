@@ -18,7 +18,7 @@ import {
   AddTrophyInput,
   addExperienceCertificationSchema,
   AddExperienceCertificationInput,
-} from "../../schemas/athleteSchema";
+} from "../../schemas/generalSchema";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
 const clubRepository = AppDataSource.getRepository(Club);
