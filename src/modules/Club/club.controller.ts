@@ -176,6 +176,14 @@ export const getStaff = async (req: Request, res: Response) => {
         status: 400,
       });
     }
+
+    // fetching club by ID
+    const club = await clubRepository.findOne({
+      where: { id: parsedId },
+      relations: ["coaches"],
+    });
+
+    
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
