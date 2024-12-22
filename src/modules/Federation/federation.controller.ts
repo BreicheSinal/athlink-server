@@ -207,3 +207,30 @@ export const getClubs = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getFederations = async (req: Request, res: Response) => {
+  try {
+    const federations = await federationRepository.find();
+
+    if (federations.length === 0) {
+      return throwNotFound({
+        entity: `Federations`,
+        check: true,
+        res,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Federations fetched successfully",
+      clubs: federations,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
