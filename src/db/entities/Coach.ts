@@ -13,32 +13,31 @@ import { User } from "./User";
 import { Club } from "./Club";
 
 @Entity("coach")
-@Index(["user", "club"])
 export class Coach {
   @PrimaryGeneratedColumn("increment", {
     type: "bigint",
     unsigned: true,
   })
-  id!: number;
+  id: number;
 
   @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
-  user!: User;
+  user: User;
 
   @ManyToOne(() => Club, (club) => club.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "club_id" })
-  club!: Club;
+  club: Club;
 
   @Column({
     type: "varchar",
     length: 255,
     nullable: false,
   })
-  specialty!: string;
+  specialty: string;
 
   @CreateDateColumn({ type: "datetime" })
-  createdAt!: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: "datetime" })
-  updatedAt!: Date;
+  updated_at: Date;
 }
