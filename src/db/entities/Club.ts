@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 
 import { User } from "./User";
+import { Federation } from "./Federation";
 
 @Entity("club")
 export class Club {
@@ -21,6 +22,12 @@ export class Club {
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({ name: "user_id" })
   user: User;
+
+  @ManyToOne(() => Federation, (federation) => federation.id, {
+    onDelete: "CASCADE",
+  })
+  @JoinColumn({ name: "federation_id" })
+  federation: Federation;
 
   @Column({
     type: "varchar",

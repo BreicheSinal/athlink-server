@@ -159,4 +159,51 @@ export const editBio = async (req: Request, res: Response) => {
   }
 };
 
-export const getClubs = async (req: Request, res: Response) => {};
+export const getClubs = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params; //club id
+
+    // validating ID
+    if (!id)
+      return throwError({
+        message: "ID required",
+        res,
+        status: 400,
+      });
+
+    const parsedId = parseInt(id);
+    if (isNaN(parsedId) || parsedId <= 0) {
+      return throwError({
+        message: "ID must be a positive integer",
+        res,
+        status: 400,
+      });
+    }
+
+    // fetching club by ID
+    const clubs = await clubRepository.find({
+      where: { federation: { id: parsedId } },
+    });
+
+    if (clubs.length === 0) {
+      return throwNotFound({
+        entity: `Clubs with federation id ${id}`,
+        check: true,
+        res,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Staff fetched successfully",
+      coaches: clubs,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
