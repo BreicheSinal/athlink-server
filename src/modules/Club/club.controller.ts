@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../../db/connection";
 import { User } from "../../db/entities/User";
 import { Club } from "../../db/entities/Club";
+import { Coach } from "../../db/entities/Coach";
 
 import { throwError, throwNotFound } from "../../utils/error";
 
@@ -15,6 +16,7 @@ import {
 
 const clubRepository = AppDataSource.getRepository(Club);
 const userRepository = AppDataSource.getRepository(User);
+const coachRepository = AppDataSource.getRepository(Coach);
 
 export const editProfile = async (req: Request, res: Response) => {
   try {
@@ -178,18 +180,22 @@ export const getStaff = async (req: Request, res: Response) => {
     }
 
     // fetching club by ID
-    const club = await clubRepository.findOne({
-      where: { id: parsedId },
-      relations: ["coaches"],
+    const staff = await coachRepository.find({
+      where: { club: { id: parsedId } },
     });
 
-    if (!club) {
+    if (!staff) {
       return throwNotFound({
-        entity: `Club with id ${id}`,
+        entity: `Staff with id ${id}`,
         check: true,
         res,
       });
     }
+
+    return res.status(200).json({
+      message: "Staff fetched successfully",
+      coaches: staff,
+    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
