@@ -1,4 +1,5 @@
 import { contract } from "../../provider/contract";
+import { Trophy, VerificationStatus } from "../../types/trophy";
 
 // service class
 export class TrophyService {
@@ -28,6 +29,33 @@ export class TrophyService {
       await transaction.wait();
     } catch (error) {
       console.error("Error verifying trophy:", error);
+      throw error;
+    }
+  }
+
+  // function to get a trophy by ID
+  async getTrophyById(trophyId: number): Promise<Trophy | null> {
+    try {
+      const trophy = await contract.trophies(trophyId);
+
+      if (
+        Number(trophy.id) === 0 &&
+        trophy.name === "" &&
+        trophy.requester === "0x0000000000000000000000000000000000000000"
+      ) {
+        return null;
+      }
+
+      return {
+        id: Number(trophy.id),
+        name: trophy.name,
+        description: trophy.description,
+        status: trophy.status as VerificationStatus,
+        requester: trophy.requester,
+        timestamp: new Date(Number(trophy.timestamp) * 1000),
+      };
+    } catch (error) {
+      console.error("Error getting trophy:", error);
       throw error;
     }
   }
