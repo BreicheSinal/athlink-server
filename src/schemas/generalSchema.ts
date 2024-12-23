@@ -33,6 +33,9 @@ export const editProfileSchema = z.object({
 
   // federation
   country: z.string().max(100).optional(),
+
+  // coach
+  specialty: z.string().max(255).optional(),
 });
 
 export type EditProfileInput = z.infer<typeof editProfileSchema>;
