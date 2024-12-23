@@ -26,14 +26,14 @@ export class Coach {
 
   @ManyToOne(() => Club, (club) => club.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "club_id" })
-  club: Club;
+  club: Club | null;
 
   @Column({
     type: "varchar",
     length: 255,
     nullable: false,
   })
-  specialty: string;
+  specialty: string | null;
 
   @CreateDateColumn({ type: "datetime" })
   created_at: Date;
