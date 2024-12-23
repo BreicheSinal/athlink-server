@@ -7,6 +7,7 @@ import { UserRole } from "../../db/entities/UserRole";
 import { Athlete } from "../../db/entities/Athlete";
 import { Club } from "../../db/entities/Club";
 import { Federation } from "../../db/entities/Federation";
+import { Coach } from "../../db/entities/Coach";
 
 import { throwError, throwNotFound } from "../../utils/error";
 
@@ -20,6 +21,7 @@ const userRoleRepository = AppDataSource.getRepository(UserRole);
 const athleteRepository = AppDataSource.getRepository(Athlete);
 const clubRepository = AppDataSource.getRepository(Club);
 const federationRepository = AppDataSource.getRepository(Federation);
+const coachRepository = AppDataSource.getRepository(Coach);
 
 // only alphabetic characters in name
 const isValidName = (name: string) => {
@@ -120,9 +122,17 @@ export const register = async (req: Request, res: Response) => {
           // role is athlete - create an athlete record
           if (role.role_name.toLocaleLowerCase() === "athlete") {
             const athlete = new Athlete();
+            athlete.club = null;
             athlete.user = savedUser;
 
             await athleteRepository.save(athlete);
+          }
+          // role is coach - create a coach record
+          else if (role.role_name.toLowerCase() === "coach") {
+            const coach = new Coach();
+            coach.user = savedUser;
+
+            await clubRepository.save(coach);
           }
           // role is club - create a club record
           else if (role.role_name.toLowerCase() === "club") {
