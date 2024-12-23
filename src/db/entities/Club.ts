@@ -27,7 +27,7 @@ export class Club {
     onDelete: "CASCADE",
   })
   @JoinColumn({ name: "federation_id" })
-  federation: Federation;
+  federation: Federation | null;
 
   @Column({
     type: "varchar",

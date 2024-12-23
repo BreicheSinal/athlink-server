@@ -122,7 +122,6 @@ export const register = async (req: Request, res: Response) => {
           // role is athlete - create an athlete record
           if (role.role_name.toLocaleLowerCase() === "athlete") {
             const athlete = new Athlete();
-            athlete.club = null;
             athlete.user = savedUser;
 
             await athleteRepository.save(athlete);
@@ -132,7 +131,7 @@ export const register = async (req: Request, res: Response) => {
             const coach = new Coach();
             coach.user = savedUser;
 
-            await clubRepository.save(coach);
+            await coachRepository.save(coach);
           }
           // role is club - create a club record
           else if (role.role_name.toLowerCase() === "club") {
