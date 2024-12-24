@@ -4,6 +4,7 @@ import {
   editBio,
   addTrophy,
   addExperienceCertification,
+  getAthlete,
 } from "./profile.controller";
 
 const router = Router();
@@ -15,5 +16,7 @@ router.post(
   "/addExperienceCertification/:user_id",
   addExperienceCertification as any
 );
+
+router.get("/:id", getAthlete as any);
 
 export default router;

@@ -348,6 +348,7 @@ export const getAthlete = async (req: Request, res: Response) => {
     // fetching athlete by ID
     const athlete = await athleteRepository.find({
       where: { id: parsedId },
+      relations: ["user", "club"],
     });
 
     if (athlete.length === 0) {
@@ -359,7 +360,7 @@ export const getAthlete = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({
-      message: "Staff fetched successfully",
+      message: "Athlete fetched successfully",
       athlete: athlete,
     });
   } catch (error: unknown) {
