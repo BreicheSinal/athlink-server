@@ -219,6 +219,27 @@ export const login = async (req: Request, res: Response) => {
     // extracting (explicitly to include them in res)user roles
     const roles = user.userRoles.map((userRole) => userRole.role.role_name);
 
+    const roleRepoMap: any = {
+      Athlete: athleteRepository,
+      Coach: coachRepository,
+      Club: clubRepository,
+      Federation: federationRepository,
+    };
+
+    let specificRoleId: number | null = null;
+
+    for (const role of roles) {
+      const repository = roleRepoMap[role];
+      if (repository) {
+        const record = await repository.findOne({
+          where: { user: { id: user.id } },
+        });
+
+        specificRoleId = record?.id || null;
+        break;
+      }
+    }
+
     // generating JWT
     const token = jwt.sign(
       { id: user.id, email: user.email, roles },
@@ -231,7 +252,7 @@ export const login = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: "Login successful",
-      user: { ...userWithoutPassword, roles },
+      user: { ...userWithoutPassword, roles, specificRoleId },
       token,
     });
   } catch (error: unknown) {
