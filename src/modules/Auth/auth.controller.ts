@@ -194,7 +194,7 @@ export const login = async (req: Request, res: Response) => {
     const user = await userRepository.findOne({
       where: { email },
       select: ["id", "name", "email", "password"],
-      relations: ["userRoles", "userRoles.role"],
+      relations: ["userRoles.role"],
     });
 
     if (!user) {
@@ -252,7 +252,7 @@ export const login = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: "Login successful",
-      user: { ...userWithoutPassword, roles, specificRoleId },
+      user: { ...userWithoutPassword, specificRoleId },
       token,
     });
   } catch (error: unknown) {
