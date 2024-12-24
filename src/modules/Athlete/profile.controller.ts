@@ -323,3 +323,52 @@ export const addExperienceCertification = async (
     });
   }
 };
+
+export const getAthlete = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params; // athlete id
+
+    // validating ID
+    if (!id)
+      return throwError({
+        message: "ID required",
+        res,
+        status: 400,
+      });
+
+    const parsedId = parseInt(id);
+    if (isNaN(parsedId) || parsedId <= 0) {
+      return throwError({
+        message: "ID must be a positive integer",
+        res,
+        status: 400,
+      });
+    }
+
+    // fetching athlete by ID
+    const athlete = await athleteRepository.find({
+      where: { id: parsedId },
+    });
+
+    if (athlete.length === 0) {
+      return throwNotFound({
+        entity: `Athlete with id ${id}`,
+        check: true,
+        res,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Staff fetched successfully",
+      athlete: athlete,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
