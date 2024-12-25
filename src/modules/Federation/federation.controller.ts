@@ -234,3 +234,53 @@ export const getFederations = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getFederation = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params; // federation id
+
+    // validating ID
+    if (!id)
+      return throwError({
+        message: "ID required",
+        res,
+        status: 400,
+      });
+
+    const parsedId = parseInt(id);
+    if (isNaN(parsedId) || parsedId <= 0) {
+      return throwError({
+        message: "ID must be a positive integer",
+        res,
+        status: 400,
+      });
+    }
+
+    // fetching federation by ID
+    const federation = await federationRepository.find({
+      where: { id: parsedId },
+      relations: ["user", "federation_type"],
+    });
+
+    if (federation.length === 0) {
+      return throwNotFound({
+        entity: `Federation with id ${id}`,
+        check: true,
+        res,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Federation fetched successfully",
+      Federation: federation,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
