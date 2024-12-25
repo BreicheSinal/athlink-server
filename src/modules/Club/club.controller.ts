@@ -231,7 +231,7 @@ export const getClub = async (req: Request, res: Response) => {
     // fetching athlete by ID
     const club = await clubRepository.find({
       where: { id: parsedId },
-      relations: ["user", "federation"],
+      relations: ["user", "federation", "federation.user"],
     });
 
     if (club.length === 0) {
@@ -244,7 +244,7 @@ export const getClub = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: "Club fetched successfully",
-      Club: club,
+      club: club,
     });
   } catch (error: unknown) {
     const errorMessage =
