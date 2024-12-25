@@ -4,6 +4,7 @@ import {
   editBio,
   getClubs,
   getFederations,
+  getFederation,
 } from "./federation.controller";
 
 const router = Router();
@@ -13,5 +14,6 @@ router.put("/editBio/:id", editBio as any);
 
 router.get("/getClubs/:id", getClubs as any);
 router.get("/getFederations", getFederations as any);
+router.get("/:id", getFederation as any);
 
 export default router;
