@@ -259,7 +259,7 @@ export const getFederation = async (req: Request, res: Response) => {
     // fetching federation by ID
     const federation = await federationRepository.find({
       where: { id: parsedId },
-      relations: ["user", "federation_type"],
+      relations: ["user"],
     });
 
     if (federation.length === 0) {
@@ -272,7 +272,7 @@ export const getFederation = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: "Federation fetched successfully",
-      Federation: federation,
+      federation: federation,
     });
   } catch (error: unknown) {
     const errorMessage =
