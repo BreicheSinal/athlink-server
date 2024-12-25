@@ -129,7 +129,7 @@ export const getCoach = async (req: Request, res: Response) => {
     // fetching coach by ID
     const coach = await coachRepository.find({
       where: { id: parsedId },
-      relations: ["user", "club"],
+      relations: ["user", "club", "club.user"],
     });
 
     if (coach.length === 0) {
@@ -142,7 +142,7 @@ export const getCoach = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: "Coach fetched successfully",
-      Coach: coach,
+      coach: coach,
     });
   } catch (error: unknown) {
     const errorMessage =
