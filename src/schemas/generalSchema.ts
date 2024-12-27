@@ -74,7 +74,8 @@ export const addExperienceCertificationSchema = z.object({
   }),
   date: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date must be in the format YYYY-MM-DD"),
+    .min(1, "Date must be at least 1 character long")
+    .max(100, "Date must be at most 100 characters"),
   description: z.string().optional(),
 });
 
