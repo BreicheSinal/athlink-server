@@ -361,7 +361,7 @@ export const getAthlete = async (req: Request, res: Response) => {
 
     const athleteExp = await experienceCertificationRepository.find({
       where: {
-        user: { id: parsedId },
+        user: { id: athlete[0].user.id },
         type: "experience",
       },
       order: {
