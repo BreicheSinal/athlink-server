@@ -310,7 +310,7 @@ export const addExperienceCertification = async (
       await experienceCertificationRepository.save(experienceCertification);
 
     return res.status(201).json({
-      message: "Trophy created successfully",
+      message: `${experienceCertification.type} created successfully`,
       athlete: createdExperienceCertification,
     });
   } catch (error: unknown) {
