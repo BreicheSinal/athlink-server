@@ -324,6 +324,76 @@ export const addExperienceCertification = async (
   }
 };
 
+export const editExperienceCertification = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { exp_id } = req.params;
+
+    // Validate IDs
+    const parsedExpId = parseInt(exp_id, 10);
+    if (isNaN(parsedExpId) || parsedExpId <= 0) {
+      return throwError({
+        message: "Experience ID must be valid positive numbers",
+        res,
+        status: 400,
+      });
+    }
+
+    // Validate body
+    const result = addExperienceCertificationSchema.safeParse(req.body);
+    if (!result.success) {
+      return throwError({
+        message: "Validation error",
+        res,
+        status: 400,
+        details: result.error.format(),
+      });
+    }
+
+    const { name, type, date, description }: AddExperienceCertificationInput =
+      result.data;
+
+    // Find experience
+    const experienceCertification =
+      await experienceCertificationRepository.findOne({
+        where: { id: parsedExpId },
+      });
+
+    if (!experienceCertification) {
+      return throwNotFound({
+        entity: `Experience with id ${parsedExpId}`,
+        check: true,
+        res,
+      });
+    }
+
+    // Update fields
+    experienceCertification.name = name;
+    experienceCertification.type = type;
+    experienceCertification.date = date;
+    experienceCertification.description = description || null;
+
+    const updatedExperience = await experienceCertificationRepository.save(
+      experienceCertification
+    );
+
+    return res.status(200).json({
+      message: `${type} updated successfully`,
+      athlete: updatedExperience,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
+
 export const getAthlete = async (req: Request, res: Response) => {
   try {
     const { id } = req.params; // athlete id
