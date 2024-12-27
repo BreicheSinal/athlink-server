@@ -103,7 +103,74 @@ export const editProfile = async (req: Request, res: Response) => {
   }
 };
 
-export const editBio = async (req: Request, res: Response) => {};
+export const editBio = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params; // coach id
+
+    // validating ID
+    if (!id)
+      return throwError({
+        message: "ID required",
+        res,
+        status: 400,
+      });
+
+    // validating body using zod
+    const result = editBioSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return throwError({
+        message: "Validation error",
+        res,
+        status: 400,
+        details: result.error.format(),
+      });
+    }
+
+    const { bio }: EditBioInput = result.data;
+
+    // finding club by id
+    const coach = await coachRepository.findOne({
+      where: { id: parseInt(id) },
+      relations: ["user"],
+    });
+
+    if (!coach) {
+      return throwNotFound({
+        entity: `Coach with id ${id}`,
+        check: true,
+        res,
+      });
+    }
+
+    // updating user bio
+    const user = coach.user;
+
+    if (!user)
+      return throwNotFound({
+        entity: `User associated with coach of id ${id}`,
+        check: true,
+        res,
+      });
+
+    user.bio = bio;
+
+    const updatedUserBio = await userRepository.save(user);
+
+    return res.status(200).json({
+      message: "Coach bio updated successfully",
+      bio: updatedUserBio,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
 
 export const getCoach = async (req: Request, res: Response) => {
   try {
