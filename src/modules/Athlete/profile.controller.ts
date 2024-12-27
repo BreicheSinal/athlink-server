@@ -359,9 +359,20 @@ export const getAthlete = async (req: Request, res: Response) => {
       });
     }
 
+    const athleteExp = await experienceCertificationRepository.find({
+      where: {
+        user: { id: parsedId },
+        type: "experience",
+      },
+      order: {
+        name: "ASC",
+      },
+    });
+
     return res.status(200).json({
       message: "Athlete fetched successfully",
       athlete: athlete,
+      experience: athleteExp,
     });
   } catch (error: unknown) {
     const errorMessage =
