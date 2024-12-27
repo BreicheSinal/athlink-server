@@ -256,3 +256,33 @@ export const getClub = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getClubs = async (req: Request, res: Response) => {
+  try {
+    // Fetching all clubs with their relations
+    const clubs = await clubRepository.find({
+      relations: ["user"],
+    });
+
+    if (clubs.length === 0) {
+      return throwNotFound({
+        entity: "Clubs",
+        check: true,
+        res,
+      });
+    }
+
+    return res.status(200).json({
+      message: "All clubs fetched successfully",
+      clubs,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
