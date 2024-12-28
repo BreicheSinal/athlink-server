@@ -88,3 +88,39 @@ export const updateConnectionStatus = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getConnections = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.body;
+
+    const parsedID = parseInt(userId, 10);
+    if (isNaN(parsedID) || parsedID <= 0) {
+      return throwError({
+        message: `Invalid entity_id: ${userId}`,
+        res,
+        status: 400,
+      });
+    }
+
+    const connections = await connectionService.getConnectionsService(parsedID);
+
+    if (connections.length === 0) {
+      return throwNotFound({
+        entity: "Connections",
+        res,
+      });
+    }
+
+    return res.status(201).json({
+      message: "Fetched connections successfully",
+      connections,
+    });
+  } catch (error) {
+    throwError({
+      message: "Failed to fetch connections",
+      res,
+      status: 500,
+      details: error,
+    });
+  }
+};
