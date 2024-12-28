@@ -1,28 +1,18 @@
 import { Request, Response } from "express";
-
-import { AppDataSource } from "../../db/connection";
-
-import { User } from "../../db/entities/User";
-import { Federation } from "../../db/entities/Federation";
-import { Club } from "../../db/entities/Club";
-
 import { throwError, throwNotFound } from "../../utils/error";
+import { editProfileSchema, editBioSchema } from "../../schemas/generalSchema";
 import {
-  editProfileSchema,
-  EditProfileInput,
-  editBioSchema,
-  EditBioInput,
-} from "../../schemas/generalSchema";
-
-const userRepository = AppDataSource.getRepository(User);
-const federationRepository = AppDataSource.getRepository(Federation);
-const clubRepository = AppDataSource.getRepository(Club);
+  editProfileService,
+  editBioService,
+  getClubsService,
+  getFederationsService,
+  getFederationService,
+} from "./federation.service";
 
 export const editProfile = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    // validating ID
     if (!id) {
       return throwError({
         message: "ID required",
@@ -40,9 +30,7 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
-    // validating body based on zod
     const result = editProfileSchema.safeParse(req.body);
-
     if (!result.success) {
       return throwError({
         message: "Validation error",
@@ -52,33 +40,22 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
-    const { location, founded_year, country }: EditProfileInput = result.data;
-
-    // finding federation by id
-    const federation = await federationRepository.findOne({
-      where: { id: parsedId },
-    });
-
-    if (!federation) {
-      return throwNotFound({
-        entity: `Federation with id ${id}`,
-        check: true,
-        res,
+    try {
+      const updatedFederation = await editProfileService(parsedId, result.data);
+      return res.status(200).json({
+        message: "Federation updated successfully",
+        athlete: updatedFederation,
       });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("not found")) {
+        return throwNotFound({
+          entity: error.message,
+          check: true,
+          res,
+        });
+      }
+      throw error;
     }
-
-    // updating fields
-    federation.location = location == null ? null : location;
-    federation.country = country == null ? null : country;
-    federation.founded_year = founded_year == null ? null : founded_year;
-
-    // saved updated federation
-    const updatedFederation = await federationRepository.save(federation);
-
-    return res.status(200).json({
-      message: "Federation updated successfully",
-      athlete: updatedFederation,
-    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
@@ -92,19 +69,17 @@ export const editProfile = async (req: Request, res: Response) => {
 
 export const editBio = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; //federation id
+    const { id } = req.params;
 
-    // validating ID
-    if (!id)
+    if (!id) {
       return throwError({
         message: "ID required",
         res,
         status: 400,
       });
+    }
 
-    // validating body using zod
     const result = editBioSchema.safeParse(req.body);
-
     if (!result.success) {
       return throwError({
         message: "Validation error",
@@ -114,40 +89,22 @@ export const editBio = async (req: Request, res: Response) => {
       });
     }
 
-    const { bio }: EditBioInput = result.data;
-
-    // finding federation by id
-    const federation = await federationRepository.findOne({
-      where: { id: parseInt(id) },
-      relations: ["user"],
-    });
-
-    if (!federation) {
-      return throwNotFound({
-        entity: `Federation with id ${id}`,
-        check: true,
-        res,
+    try {
+      const updatedBio = await editBioService(parseInt(id), result.data);
+      return res.status(200).json({
+        message: "Federation bio updated successfully",
+        bio: updatedBio,
       });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("not found")) {
+        return throwNotFound({
+          entity: error.message,
+          check: true,
+          res,
+        });
+      }
+      throw error;
     }
-
-    // updating user bio
-    const user = federation.user;
-
-    if (!user)
-      return throwNotFound({
-        entity: `User associated with federation of id ${id} not found`,
-        check: true,
-        res,
-      });
-
-    user.bio = bio;
-
-    const updatedUserBio = await userRepository.save(user);
-
-    return res.status(200).json({
-      message: "Federation bio updated successfully",
-      bio: updatedUserBio,
-    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
@@ -161,15 +118,15 @@ export const editBio = async (req: Request, res: Response) => {
 
 export const getClubs = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; // federation id
+    const { id } = req.params;
 
-    // validating ID
-    if (!id)
+    if (!id) {
       return throwError({
         message: "ID required",
         res,
         status: 400,
       });
+    }
 
     const parsedId = parseInt(id);
     if (isNaN(parsedId) || parsedId <= 0) {
@@ -180,23 +137,22 @@ export const getClubs = async (req: Request, res: Response) => {
       });
     }
 
-    // fetching clubs having same federation id
-    const clubs = await clubRepository.find({
-      where: { federation: { id: parsedId } },
-    });
-
-    if (clubs.length === 0) {
-      return throwNotFound({
-        entity: `Clubs with federation id ${id}`,
-        check: true,
-        res,
+    try {
+      const clubs = await getClubsService(parsedId);
+      return res.status(200).json({
+        message: "Clubs fetched successfully",
+        clubs: clubs,
       });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("not found")) {
+        return throwNotFound({
+          entity: error.message,
+          check: true,
+          res,
+        });
+      }
+      throw error;
     }
-
-    return res.status(200).json({
-      message: "Clubs fetched successfully",
-      clubs: clubs,
-    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
@@ -210,20 +166,22 @@ export const getClubs = async (req: Request, res: Response) => {
 
 export const getFederations = async (req: Request, res: Response) => {
   try {
-    const federations = await federationRepository.find();
-
-    if (federations.length === 0) {
-      return throwNotFound({
-        entity: `Federations`,
-        check: true,
-        res,
+    try {
+      const federations = await getFederationsService();
+      return res.status(200).json({
+        message: "Federations fetched successfully",
+        clubs: federations,
       });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("not found")) {
+        return throwNotFound({
+          entity: error.message,
+          check: true,
+          res,
+        });
+      }
+      throw error;
     }
-
-    return res.status(200).json({
-      message: "Federations fetched successfully",
-      clubs: federations,
-    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
@@ -237,15 +195,15 @@ export const getFederations = async (req: Request, res: Response) => {
 
 export const getFederation = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; // federation id
+    const { id } = req.params;
 
-    // validating ID
-    if (!id)
+    if (!id) {
       return throwError({
         message: "ID required",
         res,
         status: 400,
       });
+    }
 
     const parsedId = parseInt(id);
     if (isNaN(parsedId) || parsedId <= 0) {
@@ -256,24 +214,22 @@ export const getFederation = async (req: Request, res: Response) => {
       });
     }
 
-    // fetching federation by ID
-    const federation = await federationRepository.find({
-      where: { id: parsedId },
-      relations: ["user"],
-    });
-
-    if (federation.length === 0) {
-      return throwNotFound({
-        entity: `Federation with id ${id}`,
-        check: true,
-        res,
+    try {
+      const federation = await getFederationService(parsedId);
+      return res.status(200).json({
+        message: "Federation fetched successfully",
+        federation: federation,
       });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("not found")) {
+        return throwNotFound({
+          entity: error.message,
+          check: true,
+          res,
+        });
+      }
+      throw error;
     }
-
-    return res.status(200).json({
-      message: "Federation fetched successfully",
-      federation: federation,
-    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
