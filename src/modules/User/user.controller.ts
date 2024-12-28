@@ -162,3 +162,38 @@ export const getPendingConnections = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const searchUsers = async (req: Request, res: Response) => {
+  try {
+    const search = req.query.search as string;
+    const { currentUserId } = req.params;
+
+    const parsedId = parseInt(currentUserId, 10);
+    if (isNaN(parsedId) || parsedId <= 0) {
+      return throwError({
+        message: `Invalid entity_id: ${currentUserId}`,
+        res,
+        status: 400,
+      });
+    }
+
+    if (!search) {
+      return res.status(400).json({
+        status: "error",
+        message: "Search query is required",
+      });
+    }
+
+    const users = await connectionService.searchUsersService(search, parsedId);
+
+    return res.status(200).json({
+      status: "success",
+      users,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "error",
+      message: error instanceof Error ? error.message : "Internal server error",
+    });
+  }
+};
