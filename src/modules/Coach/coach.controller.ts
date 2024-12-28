@@ -1,27 +1,16 @@
 import { Request, Response } from "express";
-
-import { AppDataSource } from "../../db/connection";
-import { Coach } from "../../db/entities/Coach";
-import { User } from "../../db/entities/User";
-import { Club } from "../../db/entities/Club";
-
 import { throwError, throwNotFound } from "../../utils/error";
+import { editProfileSchema, editBioSchema } from "../../schemas/generalSchema";
 import {
-  editProfileSchema,
-  EditProfileInput,
-  editBioSchema,
-  EditBioInput,
-} from "../../schemas/generalSchema";
-
-const coachRepository = AppDataSource.getRepository(Coach);
-const userRepository = AppDataSource.getRepository(User);
-const clubRepository = AppDataSource.getRepository(Club);
+  editProfileService,
+  editBioService,
+  getCoachService,
+} from "./coach.service";
 
 export const editProfile = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    // validating ID
     if (!id) {
       return throwError({
         message: "ID required",
@@ -39,9 +28,7 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
-    // validating body based on zod
     const result = editProfileSchema.safeParse(req.body);
-
     if (!result.success) {
       return throwError({
         message: "Validation error",
@@ -51,47 +38,22 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
-    const { club_id, specialty }: EditProfileInput = result.data;
-
-    // finding coach by id
-    const coach = await coachRepository.findOne({
-      where: { id: parsedId },
-    });
-
-    if (!coach) {
-      return throwNotFound({
-        entity: `Coach with id ${id}`,
-        check: true,
-        res,
+    try {
+      const updatedCoach = await editProfileService(parsedId, result.data);
+      return res.status(200).json({
+        message: "Coach updated successfully",
+        athlete: updatedCoach,
       });
-    }
-
-    // validating club
-    if (club_id !== null && club_id !== undefined) {
-      const club = await clubRepository.findOne({ where: { id: club_id } });
-
-      if (!club) {
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("not found")) {
         return throwNotFound({
-          entity: `Club with id ${club_id}`,
+          entity: error.message,
           check: true,
           res,
         });
       }
-      coach.club = club;
-    } else {
-      coach.club = null;
+      throw error;
     }
-
-    // updating fields
-    coach.specialty = specialty == null ? null : specialty;
-
-    // saved updated club
-    const updatedCoach = await coachRepository.save(coach);
-
-    return res.status(200).json({
-      message: "Coach updated successfully",
-      athlete: updatedCoach,
-    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
@@ -105,19 +67,17 @@ export const editProfile = async (req: Request, res: Response) => {
 
 export const editBio = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; // coach id
+    const { id } = req.params;
 
-    // validating ID
-    if (!id)
+    if (!id) {
       return throwError({
         message: "ID required",
         res,
         status: 400,
       });
+    }
 
-    // validating body using zod
     const result = editBioSchema.safeParse(req.body);
-
     if (!result.success) {
       return throwError({
         message: "Validation error",
@@ -127,40 +87,22 @@ export const editBio = async (req: Request, res: Response) => {
       });
     }
 
-    const { bio }: EditBioInput = result.data;
-
-    // finding club by id
-    const coach = await coachRepository.findOne({
-      where: { id: parseInt(id) },
-      relations: ["user"],
-    });
-
-    if (!coach) {
-      return throwNotFound({
-        entity: `Coach with id ${id}`,
-        check: true,
-        res,
+    try {
+      const updatedBio = await editBioService(parseInt(id), result.data);
+      return res.status(200).json({
+        message: "Coach bio updated successfully",
+        bio: updatedBio,
       });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("not found")) {
+        return throwNotFound({
+          entity: error.message,
+          check: true,
+          res,
+        });
+      }
+      throw error;
     }
-
-    // updating user bio
-    const user = coach.user;
-
-    if (!user)
-      return throwNotFound({
-        entity: `User associated with coach of id ${id}`,
-        check: true,
-        res,
-      });
-
-    user.bio = bio;
-
-    const updatedUserBio = await userRepository.save(user);
-
-    return res.status(200).json({
-      message: "Coach bio updated successfully",
-      bio: updatedUserBio,
-    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
@@ -174,15 +116,15 @@ export const editBio = async (req: Request, res: Response) => {
 
 export const getCoach = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; // coach id
+    const { id } = req.params;
 
-    // validating ID
-    if (!id)
+    if (!id) {
       return throwError({
         message: "ID required",
         res,
         status: 400,
       });
+    }
 
     const parsedId = parseInt(id);
     if (isNaN(parsedId) || parsedId <= 0) {
@@ -193,24 +135,22 @@ export const getCoach = async (req: Request, res: Response) => {
       });
     }
 
-    // fetching coach by ID
-    const coach = await coachRepository.find({
-      where: { id: parsedId },
-      relations: ["user", "club", "club.user"],
-    });
-
-    if (coach.length === 0) {
-      return throwNotFound({
-        entity: `Coach with id ${id}`,
-        check: true,
-        res,
+    try {
+      const coach = await getCoachService(parsedId);
+      return res.status(200).json({
+        message: "Coach fetched successfully",
+        coach: coach,
       });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("not found")) {
+        return throwNotFound({
+          entity: error.message,
+          check: true,
+          res,
+        });
+      }
+      throw error;
     }
-
-    return res.status(200).json({
-      message: "Coach fetched successfully",
-      coach: coach,
-    });
   } catch (error: unknown) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
