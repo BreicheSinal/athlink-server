@@ -6,6 +6,7 @@ import { Athlete } from "../../db/entities/Athlete";
 import { Club } from "../../db/entities/Club";
 import { Federation } from "../../db/entities/Federation";
 import { Coach } from "../../db/entities/Coach";
+import { RegisterInput, LoginInput } from "../../schemas/authSchema";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -21,22 +22,12 @@ const clubRepository = AppDataSource.getRepository(Club);
 const federationRepository = AppDataSource.getRepository(Federation);
 const coachRepository = AppDataSource.getRepository(Coach);
 
-export const isValidName = (name: string) => {
-  const nameRegex = /^[a-zA-Z\s]+$/;
-  return nameRegex.test(name);
-};
-
-export const isValidEmail = (email: string) => {
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email);
-};
-
-export const registerService = async (
-  name: string,
-  email: string,
-  password: string,
-  roles: number[]
-) => {
+export const registerService = async ({
+  name,
+  email,
+  password,
+  roles,
+}: RegisterInput) => {
   // Check if user exists
   const existingUser = await userRepository.findOne({
     where: [{ email }, { name }],
@@ -114,7 +105,7 @@ export const registerService = async (
   return { user: userWithoutPass, token };
 };
 
-export const loginService = async (email: string, password: string) => {
+export const loginService = async ({ email, password }: LoginInput) => {
   const user = await userRepository.findOne({
     where: { email },
     select: ["id", "name", "email", "password"],
@@ -134,7 +125,13 @@ export const loginService = async (email: string, password: string) => {
   const roles = user.userRoles.map((userRole) => userRole.role.role_name);
 
   // Get specific role ID
-  const roleRepoMap: any = {
+  const roleRepoMap: Record<
+    string,
+    | typeof athleteRepository
+    | typeof coachRepository
+    | typeof clubRepository
+    | typeof federationRepository
+  > = {
     Athlete: athleteRepository,
     Coach: coachRepository,
     Club: clubRepository,
