@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { config } from "../config/init";
+import { config } from "../../config/init";
 
 //  ethereum connection setup
 

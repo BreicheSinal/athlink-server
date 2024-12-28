@@ -8,6 +8,7 @@ import trophy from "./modules/Trophy/trophy.routes";
 import club from "./modules/Club/club.routes";
 import federation from "./modules/Federation/federation.routes";
 import coach from "./modules/Coach/coach.routes";
+import user from "./modules/User/user.routes";
 
 const app: Express = express();
 
@@ -21,6 +22,7 @@ app.use("/", trophy);
 app.use("/club", club);
 app.use("/federation", federation);
 app.use("/coach", coach);
+app.use("/user", user);
 
 app.listen(process.env.SERVER_PORT, async () => {
   console.log(`Server running at http://localhost:${process.env.SERVER_PORT}`);

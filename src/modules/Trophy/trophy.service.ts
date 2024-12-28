@@ -1,4 +1,4 @@
-import { contract } from "../../provider/contract";
+import { contract } from "../../utils/provider/contract";
 import { Trophy, VerificationStatus } from "../../utils/types/trophy";
 
 // service class
