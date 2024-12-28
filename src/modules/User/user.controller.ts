@@ -124,3 +124,44 @@ export const getConnections = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getPendingConnectionsHandler = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { userId } = req.body;
+
+    const parsedID = parseInt(userId, 10);
+    if (isNaN(parsedID) || parsedID <= 0) {
+      return throwError({
+        message: `Invalid user ID: ${userId}`,
+        res,
+        status: 400,
+      });
+    }
+
+    const connections = await connectionService.getPendingConnectionsService(
+      parsedID
+    );
+
+    if (connections.length === 0) {
+      return throwNotFound({
+        entity: "Pending connections",
+        res,
+      });
+    }
+
+    return res.status(201).json({
+      message: "Fetched pending connections successfully",
+      connections,
+    });
+  } catch (error) {
+    throwError({
+      message: "Failed to fetch pending connections",
+      res,
+      status: 500,
+      details: error,
+    });
+  }
+};
