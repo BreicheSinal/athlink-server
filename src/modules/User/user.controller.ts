@@ -96,7 +96,7 @@ export const getConnections = async (req: Request, res: Response) => {
     const parsedID = parseInt(userId, 10);
     if (isNaN(parsedID) || parsedID <= 0) {
       return throwError({
-        message: `Invalid entity_id: ${userId}`,
+        message: `Invalid user ID: ${userId}`,
         res,
         status: 400,
       });

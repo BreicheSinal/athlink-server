@@ -58,3 +58,13 @@ export const getConnectionsService = async (userId: number) => {
     relations: ["user", "connectedUser"],
   });
 };
+
+export const getPendingConnectionsService = async (userId: number) => {
+  return connectionRepository.find({
+    where: {
+      connected_user_id: userId,
+      status: "pending",
+    },
+    relations: ["user", "connectedUser"],
+  });
+};
