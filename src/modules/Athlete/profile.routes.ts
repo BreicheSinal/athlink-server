@@ -6,6 +6,7 @@ import {
   addExperienceCertification,
   editExperienceCertification,
   getAthlete,
+  deleteExperienceCertification,
 } from "./profile.controller";
 
 const router = Router();
@@ -21,5 +22,7 @@ router.post(
 );
 
 router.get("/:id", getAthlete as any);
+
+router.delete("/deleteExpCert/:exp_id", deleteExperienceCertification as any);
 
 export default router;
