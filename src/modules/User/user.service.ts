@@ -38,8 +38,8 @@ export const updateConnectionStatusService = async (
 ) => {
   const connection = await connectionRepository.findOne({
     where: {
-      user_id: connectedUserId,
-      connected_user_id: userId,
+      user_id: userId,
+      connected_user_id: connectedUserId,
       status: "pending",
     },
   });
