@@ -1,28 +1,18 @@
 import { Request, Response } from "express";
-
-import { AppDataSource } from "../../db/connection";
-import { User } from "../../db/entities/User";
-import { Club } from "../../db/entities/Club";
-import { Coach } from "../../db/entities/Coach";
-
 import { throwError, throwNotFound } from "../../utils/error";
-
+import { editProfileSchema, editBioSchema } from "../../schemas/generalSchema";
 import {
-  editProfileSchema,
-  EditProfileInput,
-  editBioSchema,
-  EditBioInput,
-} from "../../schemas/generalSchema";
-
-const clubRepository = AppDataSource.getRepository(Club);
-const userRepository = AppDataSource.getRepository(User);
-const coachRepository = AppDataSource.getRepository(Coach);
+  editProfileService,
+  editBioService,
+  getStaffService,
+  getClubService,
+  getClubsService,
+} from "./club.service";
 
 export const editProfile = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    // validating ID
     if (!id) {
       return throwError({
         message: "ID required",
@@ -40,9 +30,7 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
-    // validating body based on zod
     const result = editProfileSchema.safeParse(req.body);
-
     if (!result.success) {
       return throwError({
         message: "Validation error",
@@ -52,27 +40,7 @@ export const editProfile = async (req: Request, res: Response) => {
       });
     }
 
-    const { location, founded_year }: EditProfileInput = result.data;
-
-    // finding club by id
-    const club = await clubRepository.findOne({
-      where: { id: parsedId },
-    });
-
-    if (!club) {
-      return throwNotFound({
-        entity: `Club with id ${id}`,
-        check: true,
-        res,
-      });
-    }
-
-    // updating fields
-    club.location = location == null ? null : location;
-    club.founded_year = founded_year == null ? null : founded_year;
-
-    // saved updated club
-    const updatedClub = await clubRepository.save(club);
+    const updatedClub = await editProfileService(parsedId, result.data);
 
     return res.status(200).json({
       message: "Club updated successfully",
@@ -91,19 +59,17 @@ export const editProfile = async (req: Request, res: Response) => {
 
 export const editBio = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; //club id
+    const { id } = req.params;
 
-    // validating ID
-    if (!id)
+    if (!id) {
       return throwError({
         message: "ID required",
         res,
         status: 400,
       });
+    }
 
-    // validating body using zod
     const result = editBioSchema.safeParse(req.body);
-
     if (!result.success) {
       return throwError({
         message: "Validation error",
@@ -113,39 +79,11 @@ export const editBio = async (req: Request, res: Response) => {
       });
     }
 
-    const { bio }: EditBioInput = result.data;
-
-    // finding club by id
-    const club = await clubRepository.findOne({
-      where: { id: parseInt(id) },
-      relations: ["user"],
-    });
-
-    if (!club) {
-      return throwNotFound({
-        entity: `Club with id ${id}`,
-        check: true,
-        res,
-      });
-    }
-
-    // updating user bio
-    const user = club.user;
-
-    if (!user)
-      return throwNotFound({
-        entity: `User associated with club of id ${id}`,
-        check: true,
-        res,
-      });
-
-    user.bio = bio;
-
-    const updatedUserBio = await userRepository.save(user);
+    const updatedBio = await editBioService(parseInt(id), result.data);
 
     return res.status(200).json({
       message: "Club bio updated successfully",
-      bio: updatedUserBio,
+      bio: updatedBio,
     });
   } catch (error: unknown) {
     const errorMessage =
@@ -160,15 +98,15 @@ export const editBio = async (req: Request, res: Response) => {
 
 export const getStaff = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; //club id
+    const { id } = req.params;
 
-    // validating ID
-    if (!id)
+    if (!id) {
       return throwError({
         message: "ID required",
         res,
         status: 400,
       });
+    }
 
     const parsedId = parseInt(id);
     if (isNaN(parsedId) || parsedId <= 0) {
@@ -179,18 +117,7 @@ export const getStaff = async (req: Request, res: Response) => {
       });
     }
 
-    // fetching club by ID
-    const staff = await coachRepository.find({
-      where: { club: { id: parsedId } },
-    });
-
-    if (staff.length === 0) {
-      return throwNotFound({
-        entity: `Staff with club id ${id}`,
-        check: true,
-        res,
-      });
-    }
+    const staff = await getStaffService(parsedId);
 
     return res.status(200).json({
       message: "Staff fetched successfully",
@@ -209,15 +136,15 @@ export const getStaff = async (req: Request, res: Response) => {
 
 export const getClub = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; // club id
+    const { id } = req.params;
 
-    // validating ID
-    if (!id)
+    if (!id) {
       return throwError({
         message: "ID required",
         res,
         status: 400,
       });
+    }
 
     const parsedId = parseInt(id);
     if (isNaN(parsedId) || parsedId <= 0) {
@@ -228,19 +155,7 @@ export const getClub = async (req: Request, res: Response) => {
       });
     }
 
-    // fetching athlete by ID
-    const club = await clubRepository.find({
-      where: { id: parsedId },
-      relations: ["user", "federation", "federation.user"],
-    });
-
-    if (club.length === 0) {
-      return throwNotFound({
-        entity: `Club with id ${id}`,
-        check: true,
-        res,
-      });
-    }
+    const club = await getClubService(parsedId);
 
     return res.status(200).json({
       message: "Club fetched successfully",
@@ -259,18 +174,7 @@ export const getClub = async (req: Request, res: Response) => {
 
 export const getClubs = async (req: Request, res: Response) => {
   try {
-    // Fetching all clubs with their relations
-    const clubs = await clubRepository.find({
-      relations: ["user"],
-    });
-
-    if (clubs.length === 0) {
-      return throwNotFound({
-        entity: "Clubs",
-        check: true,
-        res,
-      });
-    }
+    const clubs = await getClubsService();
 
     return res.status(200).json({
       message: "All clubs fetched successfully",
