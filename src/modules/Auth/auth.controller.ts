@@ -1,45 +1,25 @@
 import { Request, Response } from "express";
 import { throwError } from "../../utils/error";
-import {
-  registerService,
-  loginService,
-  isValidName,
-  isValidEmail,
-} from "./auth.service";
+import { registerService, loginService } from "./auth.service";
+import { registerSchema, loginSchema } from "../../schemas/authSchema";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, roles } = req.body;
-
-    // Validate input
-    if (!name || !email || !password || !roles) {
+    // Validate input using Zod schema
+    const result = registerSchema.safeParse(req.body);
+    if (!result.success) {
       return throwError({
-        message: "Missing required fields",
+        message: "Validation error",
         res,
         status: 400,
-      });
-    }
-
-    if (!isValidName(name)) {
-      return throwError({
-        message: "Name must only contain alphabetic characters",
-        res,
-        status: 400,
-      });
-    }
-
-    if (!isValidEmail(email)) {
-      return throwError({
-        message: "Invalid email format",
-        res,
-        status: 400,
+        details: result.error.format(),
       });
     }
 
     try {
-      const result = await registerService(name, email, password, roles);
+      const serviceResult = await registerService(result.data);
       return res.status(201).json({
-        ...result,
+        ...serviceResult,
         message: "User registered successfully",
       });
     } catch (error) {
@@ -74,21 +54,22 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
+    // Validate input using Zod schema
+    const result = loginSchema.safeParse(req.body);
+    if (!result.success) {
       return throwError({
-        message: "Email and password are required",
+        message: "Validation error",
         res,
         status: 400,
+        details: result.error.format(),
       });
     }
 
     try {
-      const result = await loginService(email, password);
+      const serviceResult = await loginService(result.data);
       return res.status(200).json({
         message: "Login successful",
-        ...result,
+        ...serviceResult,
       });
     } catch (error) {
       if (
