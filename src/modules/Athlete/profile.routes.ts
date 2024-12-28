@@ -7,7 +7,7 @@ import {
   editExperienceCertification,
   getAthlete,
   deleteExperienceCertification,
-} from "./profile.controller";
+} from "./athlete.controller";
 
 const router = Router();
 
