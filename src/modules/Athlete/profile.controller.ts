@@ -394,6 +394,51 @@ export const editExperienceCertification = async (
   }
 };
 
+export const deleteExperienceCertification = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { exp_id } = req.params;
+
+    const parsedExpId = parseInt(exp_id, 10);
+    if (isNaN(parsedExpId) || parsedExpId <= 0) {
+      return throwError({
+        message: "Experience ID must be valid positive numbers",
+        res,
+        status: 400,
+      });
+    }
+
+    const experienceCertification =
+      await experienceCertificationRepository.findOne({
+        where: { id: parsedExpId },
+      });
+
+    if (!experienceCertification) {
+      return throwNotFound({
+        entity: `Experience with id ${parsedExpId}`,
+        check: true,
+        res,
+      });
+    }
+
+    await experienceCertificationRepository.remove(experienceCertification);
+
+    return res.status(200).json({
+      message: "Experience deleted successfully",
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
+
 export const getAthlete = async (req: Request, res: Response) => {
   try {
     const { id } = req.params; // athlete id
