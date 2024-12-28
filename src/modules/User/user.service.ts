@@ -51,3 +51,10 @@ export const updateConnectionStatusService = async (
   connection.status = status;
   return connectionRepository.save(connection);
 };
+
+export const getConnectionsService = async (userId: number) => {
+  return connectionRepository.find({
+    where: [{ user_id: userId }, { connected_user_id: userId }],
+    relations: ["user", "connectedUser"],
+  });
+};
