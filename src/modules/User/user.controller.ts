@@ -125,10 +125,7 @@ export const getConnections = async (req: Request, res: Response) => {
   }
 };
 
-export const getPendingConnectionsHandler = async (
-  req: Request,
-  res: Response
-) => {
+export const getPendingConnections = async (req: Request, res: Response) => {
   try {
     const { userId } = req.body;
 
