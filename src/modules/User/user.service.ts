@@ -1,7 +1,9 @@
 import { AppDataSource } from "../../db/connection";
 import { Connection } from "../../db/entities/Connection";
+import { User } from "../../db/entities/User";
 
 const connectionRepository = AppDataSource.getRepository(Connection);
+const userRepository = AppDataSource.getRepository(User);
 
 export const createConnectionService = async (
   userId: number,
@@ -67,4 +69,24 @@ export const getPendingConnectionsService = async (userId: number) => {
     },
     relations: ["user", "connectedUser"],
   });
+};
+
+export const searchUsersService = async (
+  search: string,
+  currentUserId: number
+) => {
+  if (!search) {
+    return [];
+  }
+
+  const users = await userRepository
+  
+    .createQueryBuilder("user")
+    .select(["user.id", "user.name"])
+    .where("LOWER(user.name) LIKE LOWER(:search)", { search: `%${search}%` })
+    .andWhere("user.id != :currentUserId", { currentUserId })
+    .take(10)
+    .getMany();
+
+  return users;
 };
