@@ -10,7 +10,7 @@ import {
   EditBioInput,
   AddTrophyInput,
   AddExperienceCertificationInput,
-} from "../../schemas/generalSchema";
+} from "../../utils/schemas/generalSchema";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
 const clubRepository = AppDataSource.getRepository(Club);

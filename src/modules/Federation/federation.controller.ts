@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { throwError, throwNotFound } from "../../utils/error";
-import { editProfileSchema, editBioSchema } from "../../schemas/generalSchema";
+import {
+  editProfileSchema,
+  editBioSchema,
+} from "../../utils/schemas/generalSchema";
 import {
   editProfileService,
   editBioService,

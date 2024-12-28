@@ -5,7 +5,7 @@ import {
   editBioSchema,
   addTrophySchema,
   addExperienceCertificationSchema,
-} from "../../schemas/generalSchema";
+} from "../../utils/schemas/generalSchema";
 
 import {
   editProfileService,

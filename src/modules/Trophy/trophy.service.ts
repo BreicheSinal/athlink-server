@@ -1,5 +1,5 @@
 import { contract } from "../../provider/contract";
-import { Trophy, VerificationStatus } from "../../types/trophy";
+import { Trophy, VerificationStatus } from "../../utils/types/trophy";
 
 // service class
 export class TrophyService {

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { throwError } from "../../utils/error";
 import { registerService, loginService } from "./auth.service";
-import { registerSchema, loginSchema } from "../../schemas/authSchema";
+import { registerSchema, loginSchema } from "../../utils/schemas/authSchema";
 
 export const register = async (req: Request, res: Response) => {
   try {

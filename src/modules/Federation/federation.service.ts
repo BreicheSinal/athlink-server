@@ -2,7 +2,10 @@ import { AppDataSource } from "../../db/connection";
 import { User } from "../../db/entities/User";
 import { Federation } from "../../db/entities/Federation";
 import { Club } from "../../db/entities/Club";
-import { EditProfileInput, EditBioInput } from "../../schemas/generalSchema";
+import {
+  EditProfileInput,
+  EditBioInput,
+} from "../../utils/schemas/generalSchema";
 
 const userRepository = AppDataSource.getRepository(User);
 const federationRepository = AppDataSource.getRepository(Federation);

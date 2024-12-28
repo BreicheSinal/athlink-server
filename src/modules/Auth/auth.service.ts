@@ -6,7 +6,7 @@ import { Athlete } from "../../db/entities/Athlete";
 import { Club } from "../../db/entities/Club";
 import { Federation } from "../../db/entities/Federation";
 import { Coach } from "../../db/entities/Coach";
-import { RegisterInput, LoginInput } from "../../schemas/authSchema";
+import { RegisterInput, LoginInput } from "../../utils/schemas/authSchema";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
