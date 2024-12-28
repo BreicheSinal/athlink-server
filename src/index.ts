@@ -3,7 +3,7 @@ import express, { Express } from "express";
 import { connectToDatabase } from "./db/connection";
 import "reflect-metadata";
 import auth from "./modules/Auth/auth.routes";
-import athlete from "./modules/Athlete/profile.routes";
+import athlete from "./modules/Athlete/athlete.routes";
 import trophy from "./modules/Trophy/trophy.routes";
 import club from "./modules/Club/club.routes";
 import federation from "./modules/Federation/federation.routes";
