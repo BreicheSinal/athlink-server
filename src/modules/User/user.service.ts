@@ -3,7 +3,7 @@ import { Connection } from "../../db/entities/Connection";
 
 const connectionRepository = AppDataSource.getRepository(Connection);
 
-export const createConnection = async (
+export const createConnectionService = async (
   userId: number,
   connectedUserId: number
 ) => {
