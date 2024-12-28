@@ -30,3 +30,24 @@ export const createConnectionService = async (
 
   return connectionRepository.save(connection);
 };
+
+export const updateConnectionStatusService = async (
+  userId: number,
+  connectedUserId: number,
+  status: "accepted" | "rejected"
+) => {
+  const connection = await connectionRepository.findOne({
+    where: {
+      user_id: connectedUserId,
+      connected_user_id: userId,
+      status: "pending",
+    },
+  });
+
+  if (!connection) {
+    throw new Error("Connection request not found");
+  }
+
+  connection.status = status;
+  return connectionRepository.save(connection);
+};
