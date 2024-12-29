@@ -68,3 +68,16 @@ export const getCoachService = async (id: number) => {
 
   return coach;
 };
+
+export const getCoachByUserIDService = async (id: number) => {
+  const coach = await coachRepository.find({
+    where: { user: { id } },
+    relations: ["user", "club", "club.user"],
+  });
+
+  if (coach.length === 0) {
+    throw new Error(`Coach with id ${id} not found`);
+  }
+
+  return coach;
+};
