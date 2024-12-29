@@ -80,9 +80,10 @@ export const searchUsersService = async (
   }
 
   const users = await userRepository
-  
     .createQueryBuilder("user")
-    .select(["user.id", "user.name"])
+    .leftJoinAndSelect("user.userRoles", "userRoles")
+    .leftJoinAndSelect("userRoles.role", "role")
+    .select(["user.id", "user.name", "userRoles.id", "role.role_name"])
     .where("LOWER(user.name) LIKE LOWER(:search)", { search: `%${search}%` })
     .andWhere("user.id != :currentUserId", { currentUserId })
     .take(10)
