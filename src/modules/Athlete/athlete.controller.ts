@@ -15,6 +15,7 @@ import {
   editExperienceCertificationService,
   deleteExperienceCertificationService,
   getAthleteService,
+  getAthleteByUserIDService,
 } from "./athlete.service";
 
 export const editProfile = async (req: Request, res: Response) => {
@@ -288,6 +289,45 @@ export const getAthlete = async (req: Request, res: Response) => {
     }
 
     const result = await getAthleteService(parsedId);
+
+    return res.status(200).json({
+      message: "Athlete fetched successfully",
+      athlete: result.athlete,
+      experience: result.experience,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
+
+export const getAthleteUserID = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return throwError({
+        message: "ID required",
+        res,
+        status: 400,
+      });
+    }
+
+    const parsedId = parseInt(id);
+    if (isNaN(parsedId) || parsedId <= 0) {
+      return throwError({
+        message: "ID must be a positive integer",
+        res,
+        status: 400,
+      });
+    }
+
+    const result = await getAthleteByUserIDService(parsedId);
 
     return res.status(200).json({
       message: "Athlete fetched successfully",
