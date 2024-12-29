@@ -82,3 +82,16 @@ export const getFederationService = async (id: number) => {
 
   return federation;
 };
+
+export const getFederationByUserIDService = async (id: number) => {
+  const federation = await federationRepository.find({
+    where: { user: { id } },
+    relations: ["user"],
+  });
+
+  if (federation.length === 0) {
+    throw new Error(`Federation with id ${id}`);
+  }
+
+  return federation;
+};
