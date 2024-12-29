@@ -6,6 +6,7 @@ import {
   addExperienceCertification,
   editExperienceCertification,
   getAthlete,
+  getAthleteUserID,
   deleteExperienceCertification,
 } from "./athlete.controller";
 
@@ -22,6 +23,7 @@ router.post(
 );
 
 router.get("/:id", getAthlete as any);
+router.get("/user/:id", getAthleteUserID as any);
 
 router.delete("/deleteExpCert/:exp_id", deleteExperienceCertification as any);
 
