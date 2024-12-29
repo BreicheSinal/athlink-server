@@ -165,8 +165,10 @@ export const getPendingConnections = async (req: Request, res: Response) => {
 
 export const getStatusConnection = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.query;
     const connectedUserId = parseInt(req.params.connectedUserId);
+
+    const parsedUserID = parseInt(userId as string);
 
     if (!userId) {
       return throwError({
@@ -185,7 +187,7 @@ export const getStatusConnection = async (req: Request, res: Response) => {
     }
 
     const connection = await connectionService.getStatusConnectionService(
-      userId,
+      parsedUserID,
       connectedUserId
     );
 
@@ -200,7 +202,7 @@ export const getStatusConnection = async (req: Request, res: Response) => {
       status: 400,
     });
   }
-}
+};
 
 export const searchUsers = async (req: Request, res: Response) => {
   try {
