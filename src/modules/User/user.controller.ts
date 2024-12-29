@@ -184,7 +184,7 @@ export const getStatusConnection = async (req: Request, res: Response) => {
       });
     }
 
-    const connection = await connectionService.getStatusConnection(
+    const connection = await connectionService.getStatusConnectionService(
       userId,
       connectedUserId
     );

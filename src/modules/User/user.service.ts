@@ -71,6 +71,28 @@ export const getPendingConnectionsService = async (userId: number) => {
   });
 };
 
+export const getStatusConnectionService = async (
+  userId: number,
+  connectedUserId: number
+) => {
+  if (userId === connectedUserId) {
+    throw new Error("Cannot check connection status with yourself");
+  }
+
+  const existingConnection = await connectionRepository.findOne({
+    where: [
+      { user_id: userId, connected_user_id: connectedUserId },
+      { user_id: connectedUserId, connected_user_id: userId },
+    ],
+  });
+
+  if (!existingConnection) {
+    throw new Error("No connection found between the users");
+  }
+
+  return { status: existingConnection.status };
+};
+
 export const searchUsersService = async (
   search: string,
   currentUserId: number
