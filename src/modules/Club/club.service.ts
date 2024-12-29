@@ -72,6 +72,19 @@ export const getClubService = async (id: number) => {
   return club;
 };
 
+export const getClubByUserIDService = async (id: number) => {
+  const club = await clubRepository.find({
+    where: { user: { id } },
+    relations: ["user", "federation", "federation.user"],
+  });
+
+  if (club.length === 0) {
+    throw new Error(`Club with id ${id} not found`);
+  }
+
+  return club;
+};
+
 export const getClubsService = async () => {
   const clubs = await clubRepository.find({
     relations: ["user"],
