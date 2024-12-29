@@ -10,6 +10,7 @@ import {
   getClubsService,
   getFederationsService,
   getFederationService,
+  getFederationByUserIDService,
 } from "./federation.service";
 
 export const editProfile = async (req: Request, res: Response) => {
@@ -219,6 +220,54 @@ export const getFederation = async (req: Request, res: Response) => {
 
     try {
       const federation = await getFederationService(parsedId);
+      return res.status(200).json({
+        message: "Federation fetched successfully",
+        federation: federation,
+      });
+    } catch (error) {
+      if (error instanceof Error && error.message.includes("not found")) {
+        return throwNotFound({
+          entity: error.message,
+          check: true,
+          res,
+        });
+      }
+      throw error;
+    }
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
+
+export const getFederationUserID = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return throwError({
+        message: "ID required",
+        res,
+        status: 400,
+      });
+    }
+
+    const parsedId = parseInt(id);
+    if (isNaN(parsedId) || parsedId <= 0) {
+      return throwError({
+        message: "ID must be a positive integer",
+        res,
+        status: 400,
+      });
+    }
+
+    try {
+      const federation = await getFederationByUserIDService(parsedId);
       return res.status(200).json({
         message: "Federation fetched successfully",
         federation: federation,
