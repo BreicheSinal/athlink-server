@@ -89,5 +89,9 @@ export const searchUsersService = async (
     .take(10)
     .getMany();
 
-  return users;
+  return users.map((user: User) => ({
+    id: user.id,
+    name: user.name,
+    role: user.userRoles[0]?.role?.role_name || "",
+  }));
 };
