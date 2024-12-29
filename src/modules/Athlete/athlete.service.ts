@@ -172,3 +172,29 @@ export const getAthleteService = async (id: number) => {
     experience: athleteExp,
   };
 };
+
+export const getAthleteByUserIDService = async (id: number) => {
+  const athlete = await athleteRepository.find({
+    where: { user: { id } },
+    relations: ["user", "club", "club.user"],
+  });
+
+  if (athlete.length === 0) {
+    throw new Error(`Athlete with id ${id} not found`);
+  }
+
+  const athleteExp = await experienceCertificationRepository.find({
+    where: {
+      user: { id: athlete[0].user.id },
+      type: "experience",
+    },
+    order: {
+      name: "ASC",
+    },
+  });
+
+  return {
+    athlete,
+    experience: athleteExp,
+  };
+};
