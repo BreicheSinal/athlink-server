@@ -87,7 +87,9 @@ export const getStatusConnectionService = async (
   });
 
   if (!existingConnection) {
-    throw new Error("No connection found between the users");
+    return {
+      message: "No connection found between the users",
+    };
   }
 
   return { status: existingConnection.status };
