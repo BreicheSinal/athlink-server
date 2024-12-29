@@ -4,6 +4,7 @@ import {
   editBio,
   getStaff,
   getClub,
+  getClubUserID,
   getClubs,
 } from "./club.controller";
 
@@ -14,6 +15,7 @@ router.put("/editBio/:id", editBio as any);
 
 router.get("/getStaff/:id", getStaff as any);
 router.get("/:id", getClub as any);
+router.get("/user/:id", getClubUserID as any);
 router.get("/", getClubs as any);
 
 export default router;
