@@ -163,6 +163,45 @@ export const getPendingConnections = async (req: Request, res: Response) => {
   }
 };
 
+export const getStatusConnection = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.body;
+    const connectedUserId = parseInt(req.params.connectedUserId);
+
+    if (!userId) {
+      return throwError({
+        message: "User not authenticated",
+        res,
+        status: 401,
+      });
+    }
+
+    if (isNaN(connectedUserId)) {
+      return throwError({
+        message: "Invalid user ID provided",
+        res,
+        status: 400,
+      });
+    }
+
+    const connection = await connectionService.getStatusConnection(
+      userId,
+      connectedUserId
+    );
+
+    return res.status(200).json({
+      message: "Connection status fetched successfully",
+      connection,
+    });
+  } catch (error: any) {
+    throwError({
+      message: error.message,
+      res,
+      status: 400,
+    });
+  }
+}
+
 export const searchUsers = async (req: Request, res: Response) => {
   try {
     const search = req.query.search as string;
