@@ -147,3 +147,10 @@ export const createChatService = async (user1Id: number, user2Id: number) => {
 
   return await chatRepository.save(chat);
 };
+
+export const getUserChatsService = async (userId: number) => {
+  return await chatRepository.find({
+    where: [{ user1: { id: userId } }, { user2: { id: userId } }],
+    relations: ["user1", "user2"],
+  });
+};
