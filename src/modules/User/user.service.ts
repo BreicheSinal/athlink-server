@@ -1,9 +1,11 @@
 import { AppDataSource } from "../../db/connection";
 import { Connection } from "../../db/entities/Connection";
 import { User } from "../../db/entities/User";
+import { Chat } from "../../db/entities/Chat";
 
 const connectionRepository = AppDataSource.getRepository(Connection);
 const userRepository = AppDataSource.getRepository(User);
+const chatRepository = AppDataSource.getRepository(Chat);
 
 export const createConnectionService = async (
   userId: number,
@@ -118,4 +120,30 @@ export const searchUsersService = async (
     name: user.name,
     role: user.userRoles[0]?.role?.role_name || "",
   }));
+};
+
+export const createChat = async (user1Id: number, user2Id: number) => {
+  const user1 = await userRepository.findOneBy({ id: user1Id });
+  const user2 = await userRepository.findOneBy({ id: user2Id });
+
+  if (!user1 || !user2) {
+    throw new Error("One or both users not found");
+  }
+
+  const existingChat = await chatRepository.findOne({
+    where: [
+      { user1: { id: user1Id }, user2: { id: user2Id } },
+      { user1: { id: user2Id }, user2: { id: user1Id } },
+    ],
+  });
+
+  if (existingChat) {
+    return existingChat;
+  }
+
+  const chat = new Chat();
+  chat.user1 = user1;
+  chat.user2 = user2;
+
+  return await chatRepository.save(chat);
 };
