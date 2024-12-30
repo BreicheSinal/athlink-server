@@ -140,7 +140,7 @@ export const createChatService = async (user1Id: number, user2Id: number) => {
   });
 
   if (existingChat) {
-    return existingChat;
+    return { AlreadyExists: existingChat };
   }
 
   const chat = new Chat();
@@ -151,10 +151,21 @@ export const createChatService = async (user1Id: number, user2Id: number) => {
 };
 
 export const getUserChatsService = async (userId: number) => {
-  return await chatRepository.find({
+  const chats = await chatRepository.find({
     where: [{ user1: { id: userId } }, { user2: { id: userId } }],
     relations: ["user1", "user2"],
   });
+
+  const otherUsers = chats.map((chat) => {
+    if (chat.user1.id == userId) {
+      return { id: chat.user2.id, name: chat.user2.name };
+    } else {
+      return { id: chat.user1.id, name: chat.user1.name };
+    }
+  });
+
+
+  return otherUsers;
 };
 
 export const sendMessageService = async (

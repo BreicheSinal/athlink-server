@@ -14,8 +14,8 @@ import {
 
 const router = Router();
 
-router.post("/:connectedUserId", createConnection as any);
 router.post("/chats", createChat as any);
+router.post("/:connectedUserId", createConnection as any);
 router.post("/chats/messages", sendMessage as any);
 
 router.put("/:connectedUserId", updateConnectionStatus as any);
