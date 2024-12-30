@@ -2,10 +2,12 @@ import { AppDataSource } from "../../db/connection";
 import { Connection } from "../../db/entities/Connection";
 import { User } from "../../db/entities/User";
 import { Chat } from "../../db/entities/Chat";
+import { ChatMessage } from "../../db/entities/ChatMessage";
 
 const connectionRepository = AppDataSource.getRepository(Connection);
 const userRepository = AppDataSource.getRepository(User);
 const chatRepository = AppDataSource.getRepository(Chat);
+const messageRepository = AppDataSource.getRepository(ChatMessage);
 
 export const createConnectionService = async (
   userId: number,
@@ -153,4 +155,24 @@ export const getUserChatsService = async (userId: number) => {
     where: [{ user1: { id: userId } }, { user2: { id: userId } }],
     relations: ["user1", "user2"],
   });
+};
+
+export const sendMessageService = async (
+  chatId: number,
+  senderId: number,
+  message: string
+) => {
+  const chat = await chatRepository.findOneBy({ id: chatId });
+  const sender = await userRepository.findOneBy({ id: senderId });
+
+  if (!chat || !sender) {
+    throw new Error("Chat or sender not found");
+  }
+
+  const chatMessage = new ChatMessage();
+  chatMessage.chat = chat;
+  chatMessage.sender = sender;
+  chatMessage.message = message;
+
+  return await messageRepository.save(chatMessage);
 };
