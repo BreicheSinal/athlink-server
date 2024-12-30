@@ -272,3 +272,37 @@ export const createChat = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getUserChats = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId);
+
+    if (isNaN(userId)) {
+      return throwError({
+        message: "Invalid user ID",
+        res,
+        status: 400,
+      });
+    }
+
+    const chats = await connectionService.getUserChatsService(userId);
+
+    if (!chats || chats.length === 0) {
+      return throwNotFound({
+        entity: "Chats",
+        res,
+      });
+    }
+
+    res.status(200).json({
+      message: "Chats retrieved successfully",
+      chats,
+    });
+  } catch (error: any) {
+    throwError({
+      message: error.message || "An unexpected error occurred",
+      res,
+      status: 400,
+    });
+  }
+};
