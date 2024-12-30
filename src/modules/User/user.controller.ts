@@ -306,3 +306,41 @@ export const getUserChats = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const sendMessage = async (req: Request, res: Response) => {
+  try {
+    const { chatId, senderId, message } = req.body;
+
+    if (!chatId || !senderId || !message) {
+      return throwError({
+        message: "chatId, senderId, and message are required fields",
+        res,
+        status: 400,
+      });
+    }
+
+    const chatMessage = await connectionService.sendMessageService(
+      chatId,
+      senderId,
+      message
+    );
+
+    if (!chatMessage) {
+      return throwNotFound({
+        entity: "Chat or Sender",
+        res,
+      });
+    }
+
+    res.status(201).json({
+      message: "Message sent successfully",
+      chatMessage,
+    });
+  } catch (error: any) {
+    throwError({
+      message: error.message || "An unexpected error occurred",
+      res,
+      status: 400,
+    });
+  }
+};
