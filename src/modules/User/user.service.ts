@@ -122,7 +122,7 @@ export const searchUsersService = async (
   }));
 };
 
-export const createChat = async (user1Id: number, user2Id: number) => {
+export const createChatService = async (user1Id: number, user2Id: number) => {
   const user1 = await userRepository.findOneBy({ id: user1Id });
   const user2 = await userRepository.findOneBy({ id: user2Id });
 

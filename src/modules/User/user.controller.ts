@@ -238,3 +238,37 @@ export const searchUsers = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const createChat = async (req: Request, res: Response) => {
+  try {
+    const { user1Id, user2Id } = req.body;
+
+    if (!user1Id || !user2Id) {
+      return throwError({
+        message: "Both user IDs are required",
+        res,
+        status: 400,
+      });
+    }
+
+    const chat = await connectionService.createChatService(user1Id, user2Id);
+
+    if (!chat) {
+      return throwNotFound({
+        entity: "Chat",
+        res,
+      });
+    }
+
+    res.status(201).json({
+      message: "Chat created successfully",
+      chat,
+    });
+  } catch (error: any) {
+    throwError({
+      message: error.message || "An unexpected error occurred",
+      res,
+      status: 400,
+    });
+  }
+};
