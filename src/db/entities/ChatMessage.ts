@@ -5,7 +5,6 @@ import {
   ManyToOne,
   JoinColumn,
   CreateDateColumn,
-  Index,
 } from "typeorm";
 
 import { Chat } from "./Chat";
@@ -17,19 +16,19 @@ export class ChatMessage {
     type: "bigint",
     unsigned: true,
   })
-  id!: number;
+  id: number;
 
   @ManyToOne(() => Chat, (chat) => chat.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "chat_id" })
-  chat!: Chat;
+  chat: Chat;
 
   @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "sender_id" })
-  sender!: User;
+  sender: User;
 
   @Column("text")
-  message!: string;
+  message: string;
 
   @CreateDateColumn({ type: "datetime" })
-  createdAt!: Date;
+  created_at: Date;
 }
