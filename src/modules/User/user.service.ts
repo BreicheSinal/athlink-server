@@ -177,7 +177,7 @@ export const sendMessageService = async (
   return await messageRepository.save(chatMessage);
 };
 
-export const getChatMessages = async (chatId: number) => {
+export const getChatMessagesService = async (chatId: number) => {
   return await messageRepository.find({
     where: { chat: { id: chatId } },
     relations: ["sender"],

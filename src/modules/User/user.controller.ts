@@ -344,3 +344,38 @@ export const sendMessage = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getChatMessages = async (req: Request, res: Response) => {
+  try {
+    const chatId = parseInt(req.params.chatId);
+
+    if (isNaN(chatId)) {
+      return throwError({
+        message: "Invalid chatId provided",
+        res,
+        status: 400,
+      });
+    }
+
+    const messages = await connectionService.getChatMessagesService(chatId);
+
+    if (!messages || messages.length === 0) {
+      return throwNotFound({
+        entity: "Messages for the given chat",
+        res,
+      });
+    }
+
+    res.status(200).json({
+      message: "Chat messages retrieved successfully",
+      messages,
+    });
+  } catch (error: any) {
+    throwError({
+      message: error.message || "An unexpected error occurred",
+      res,
+      status: 400,
+    });
+  }
+};
+
