@@ -25,6 +25,6 @@ router.get("/pending", getPendingConnections as any);
 router.get("/:currentUserId/search", searchUsers as any);
 router.get("/:connectedUserId", getStatusConnection as any);
 router.get("/chats/user/:userId", getUserChats as any);
-router.get("/chats/:chatId/messages", getChatMessages as any);
+router.get("/chats/messages", getChatMessages as any);
 
 export default router;

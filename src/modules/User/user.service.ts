@@ -158,12 +158,11 @@ export const getUserChatsService = async (userId: number) => {
 
   const otherUsers = chats.map((chat) => {
     if (chat.user1.id == userId) {
-      return { id: chat.user2.id, name: chat.user2.name };
+      return { chatID: chat.id, id: chat.user2.id, name: chat.user2.name };
     } else {
-      return { id: chat.user1.id, name: chat.user1.name };
+      return { chatID: chat.id, id: chat.user1.id, name: chat.user1.name };
     }
   });
-
 
   return otherUsers;
 };
@@ -188,10 +187,34 @@ export const sendMessageService = async (
   return await messageRepository.save(chatMessage);
 };
 
-export const getChatMessagesService = async (chatId: number) => {
-  return await messageRepository.find({
+export const getChatMessagesService = async (
+  chatId: number,
+  userId: number
+) => {
+  const messages = await messageRepository.find({
     where: { chat: { id: chatId } },
-    relations: ["sender"],
-    order: { created_at: "DESC" },
+    relations: ["sender", "chat", "chat.user1", "chat.user2"],
+    order: { created_at: "ASC" },
   });
+
+  const formattedMessages = messages.map((message) => {
+    const receiverId =
+      message.sender.id === message.chat.user1.id
+        ? message.chat.user2.id
+        : message.chat.user1.id;
+
+    return {
+      id: message.id,
+      senderId: message.sender.id,
+      receiverId: receiverId,
+      content: message.message,
+      chatID: chatId,
+      timestamp: new Date(message.created_at).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    };
+  });
+
+  return formattedMessages;
 };

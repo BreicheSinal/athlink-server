@@ -347,9 +347,11 @@ export const sendMessage = async (req: Request, res: Response) => {
 
 export const getChatMessages = async (req: Request, res: Response) => {
   try {
-    const chatId = parseInt(req.params.chatId);
+    const chatId = parseInt(req.query.chatId as string, 10);
+    const userId = parseInt(req.query.userId as string, 10);
 
-    if (isNaN(chatId)) {
+    console.log(userId, chatId);
+    if (isNaN(chatId) || isNaN(userId)) {
       return throwError({
         message: "Invalid chatId provided",
         res,
@@ -357,7 +359,10 @@ export const getChatMessages = async (req: Request, res: Response) => {
       });
     }
 
-    const messages = await connectionService.getChatMessagesService(chatId);
+    const messages = await connectionService.getChatMessagesService(
+      chatId,
+      userId
+    );
 
     if (!messages || messages.length === 0) {
       return throwNotFound({
@@ -378,4 +383,3 @@ export const getChatMessages = async (req: Request, res: Response) => {
     });
   }
 };
-
