@@ -38,6 +38,12 @@ export const initializeSocket = (server: http.Server) => {
         }
       }
     );
+
+     // Disconnecting 
+     socket.on('disconnect', () => {
+        onlineUsers.delete(socket.id);
+        console.log('User disconnected:', socket.id);
+      });
   });
 
   return io;
