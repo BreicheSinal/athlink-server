@@ -20,6 +20,24 @@ export const initializeSocket = (server: http.Server) => {
       onlineUsers.set(socket.id, userId);
       console.log("User joined:", userId);
     });
+
+    // New messages
+    socket.on(
+      "sendMessage",
+      (data: { receiverId: number; message: string }) => {
+        const receiverSocketId = Array.from(onlineUsers.entries()).find(
+          ([_, id]) => id === data.receiverId
+        )?.[0];
+
+        if (receiverSocketId) {
+          // Emitting to specific user
+          io.to(receiverSocketId).emit("newMessage", {
+            senderId: onlineUsers.get(socket.id),
+            ...data,
+          });
+        }
+      }
+    );
   });
 
   return io;
