@@ -4,6 +4,7 @@ import {
   updateConnectionStatus,
   getConnections,
   getPendingConnections,
+  getAcceptedConnections,
   searchUsers,
   getStatusConnection,
   createChat,
@@ -22,6 +23,7 @@ router.put("/:connectedUserId", updateConnectionStatus as any);
 
 router.get("/", getConnections as any);
 router.get("/pending", getPendingConnections as any);
+router.get("/accepted/:userId", getAcceptedConnections as any);
 router.get("/:currentUserId/search", searchUsers as any);
 router.get("/:connectedUserId", getStatusConnection as any);
 router.get("/chats/user/:userId", getUserChats as any);
