@@ -1,4 +1,6 @@
 import { init } from "./config/init";
+import { initializeSocket } from "./config/socket";
+import http from "http";
 import express, { Express } from "express";
 import { connectToDatabase } from "./db/connection";
 import "reflect-metadata";
@@ -11,8 +13,11 @@ import coach from "./modules/Coach/coach.routes";
 import user from "./modules/User/user.routes";
 
 const app: Express = express();
+const server = http.createServer(app);
 
 init(app);
+
+initializeSocket(server);
 
 app.use(express.json());
 
