@@ -163,6 +163,43 @@ export const getPendingConnections = async (req: Request, res: Response) => {
   }
 };
 
+export const getAcceptedConnections = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId);
+
+    if (isNaN(userId) || userId <= 0) {
+      return throwError({
+        message: `Invalid user ID: ${userId}`,
+        res,
+        status: 400,
+      });
+    }
+
+    const connections = await connectionService.getAcceptedConnectionsService(
+      userId
+    );
+
+    if (connections.length === 0) {
+      return throwNotFound({
+        entity: "Accepted connections",
+        res,
+      });
+    }
+
+    return res.status(200).json({
+      message: "Fetched accepted connections successfully",
+      connections,
+    });
+  } catch (error) {
+    throwError({
+      message: "Failed to fetch pending connections",
+      res,
+      status: 500,
+      details: error,
+    });
+  }
+};
+
 export const getStatusConnection = async (req: Request, res: Response) => {
   try {
     const { userId } = req.query;
@@ -347,33 +384,29 @@ export const sendMessage = async (req: Request, res: Response) => {
 
 export const getChatMessages = async (req: Request, res: Response) => {
   try {
-    const chatId = parseInt(req.query.chatId as string, 10);
+    const chatID = parseInt(req.query.chatID as string, 10);
     const userId = parseInt(req.query.userId as string, 10);
 
-    console.log(userId, chatId);
-    if (isNaN(chatId) || isNaN(userId)) {
+    console.log(userId, chatID);
+    if (isNaN(chatID) || isNaN(userId)) {
       return throwError({
-        message: "Invalid chatId provided",
+        message: "Invalid chatID provided",
         res,
         status: 400,
       });
     }
 
     const messages = await connectionService.getChatMessagesService(
-      chatId,
+      chatID,
       userId
     );
 
-    if (!messages || messages.length === 0) {
-      return throwNotFound({
-        entity: "Messages for the given chat",
-        res,
-      });
-    }
-
+    // Single response with conditional message
     res.status(200).json({
-      message: "Chat messages retrieved successfully",
-      messages,
+      message: messages?.length
+        ? "Chat messages retrieved successfully"
+        : "No messages found",
+      messages: messages || [],
     });
   } catch (error: any) {
     throwError({
