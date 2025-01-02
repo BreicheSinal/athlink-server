@@ -14,6 +14,12 @@ export const initializeSocket = (server: http.Server) => {
 
   io.on("connection", (socket) => {
     console.log("User connected:", socket.id);
+
+    // User joining with their userIDs
+    socket.on("join", (userId: number) => {
+      onlineUsers.set(socket.id, userId);
+      console.log("User joined:", userId);
+    });
   });
 
   return io;
