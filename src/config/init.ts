@@ -5,5 +5,10 @@ import cors from "cors";
 dotenv.config();
 
 export const init = (app: Express) => {
-  app.use(cors());
+  app.use(
+    cors({
+      origin: `http://localhost:${process.env.PORT}`,
+      credentials: true,
+    })
+  );
 };
