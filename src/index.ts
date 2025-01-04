@@ -16,7 +16,6 @@ const app: Express = express();
 const server = http.createServer(app);
 
 init(app);
-
 initializeSocket(server);
 
 app.use(express.json());
@@ -29,7 +28,14 @@ app.use("/federation", federation);
 app.use("/coach", coach);
 app.use("/user", user);
 
-app.listen(process.env.SERVER_PORT, async () => {
-  console.log(`Server running at http://localhost:${process.env.SERVER_PORT}`);
-  connectToDatabase();
+server.listen(process.env.SERVER_PORT, async () => {
+  try {
+    console.log(
+      `Server running at http://localhost:${process.env.SERVER_PORT}`
+    );
+    await connectToDatabase();
+  } catch (error) {
+    console.error("Server startup error:", error);
+    process.exit(1);
+  }
 });
