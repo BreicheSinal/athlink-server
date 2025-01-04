@@ -231,10 +231,7 @@ export const getChatMessagesService = async (
       receiverId: receiverId,
       content: message.message,
       chatID: chatId,
-      timestamp: new Date(message.created_at).toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
+      timestamp: message.created_at.toISOString(),
     };
   });
 
