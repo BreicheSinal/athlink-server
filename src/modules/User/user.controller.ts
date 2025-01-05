@@ -180,10 +180,7 @@ export const getAcceptedConnections = async (req: Request, res: Response) => {
     );
 
     if (connections.length === 0) {
-      return throwNotFound({
-        entity: "Accepted connections",
-        res,
-      });
+      return res.status(204).send();
     }
 
     return res.status(200).json({
@@ -323,6 +320,13 @@ export const getUserChats = async (req: Request, res: Response) => {
     }
 
     const chats = await connectionService.getUserChatsService(userId);
+
+    if (chats.length === 0) {
+      return res.status(200).json({
+        message: "No chats found for this user.",
+        chats: [],
+      });
+    }
 
     res.status(200).json({
       message: "Chats retrieved successfully",
