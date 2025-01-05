@@ -324,13 +324,6 @@ export const getUserChats = async (req: Request, res: Response) => {
 
     const chats = await connectionService.getUserChatsService(userId);
 
-    if (!chats || chats.length === 0) {
-      return throwNotFound({
-        entity: "Chats",
-        res,
-      });
-    }
-
     res.status(200).json({
       message: "Chats retrieved successfully",
       chats,
