@@ -11,8 +11,6 @@ import {
   editProfileService,
   editBioService,
   addTrophyService,
-  editExperienceCertificationService,
-  deleteExperienceCertificationService,
   getAthleteService,
   getAthleteByUserIDService,
 } from "./athlete.service";
@@ -132,84 +130,6 @@ export const addTrophy = async (req: Request, res: Response) => {
     return res.status(201).json({
       message: "Trophy created successfully",
       trophy: createdTrophy,
-    });
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error occurred";
-    console.error(`Error: ${errorMessage}`);
-    return throwError({
-      message: errorMessage,
-      res,
-    });
-  }
-};
-
-export const editExperienceCertification = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const { exp_id } = req.params;
-
-    const parsedExpId = parseInt(exp_id, 10);
-    if (isNaN(parsedExpId) || parsedExpId <= 0) {
-      return throwError({
-        message: "Experience ID must be valid positive numbers",
-        res,
-        status: 400,
-      });
-    }
-
-    const result = addExperienceCertificationSchema.safeParse(req.body);
-    if (!result.success) {
-      return throwError({
-        message: "Validation error",
-        res,
-        status: 400,
-        details: result.error.format(),
-      });
-    }
-
-    const updatedExperience = await editExperienceCertificationService(
-      parsedExpId,
-      result.data
-    );
-
-    return res.status(200).json({
-      message: `${result.data.type} updated successfully`,
-      athlete: updatedExperience,
-    });
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error occurred";
-    console.error(`Error: ${errorMessage}`);
-    return throwError({
-      message: errorMessage,
-      res,
-    });
-  }
-};
-
-export const deleteExperienceCertification = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const { exp_id } = req.params;
-
-    const parsedExpId = parseInt(exp_id, 10);
-    if (isNaN(parsedExpId) || parsedExpId <= 0) {
-      return throwError({
-        message: "Experience ID must be valid positive numbers",
-        res,
-        status: 400,
-      });
-    }
-
-    await deleteExperienceCertificationService(parsedExpId);
-
-    return res.status(200).json({
-      message: "Experience deleted successfully",
     });
   } catch (error: unknown) {
     const errorMessage =
