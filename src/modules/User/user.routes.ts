@@ -11,6 +11,7 @@ import {
   getUserChats,
   sendMessage,
   getChatMessages,
+  addExperienceCertification,
 } from "./user.controller";
 
 const router = Router();
@@ -18,6 +19,7 @@ const router = Router();
 router.post("/chats", createChat as any);
 router.post("/:connectedUserId", createConnection as any);
 router.post("/chats/messages", sendMessage as any);
+router.post("/addExpCert/:user_id", addExperienceCertification as any);
 
 router.put("/:connectedUserId", updateConnectionStatus as any);
 
