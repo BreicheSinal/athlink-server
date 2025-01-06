@@ -82,3 +82,20 @@ export const addExperienceCertificationSchema = z.object({
 export type AddExperienceCertificationInput = z.infer<
   typeof addExperienceCertificationSchema
 >;
+
+export const addTryoutSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name must be non empty text")
+    .max(255, "Name must be at most 255 characters"),
+  date: z
+    .string()
+    .min(1, "Date must be non empty")
+    .max(100, "Date must be at most 100 characters"),
+  description: z
+    .string()
+    .max(1000, "Description must be at most 1000 characters")
+    .optional(),
+});
+
+export type AddTryoutInput = z.infer<typeof addTryoutSchema>;
