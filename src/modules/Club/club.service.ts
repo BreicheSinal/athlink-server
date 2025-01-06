@@ -141,3 +141,18 @@ export const addTryOutService = async (
     relations: ["club"],
   });
 };
+
+export const deleteTryOutService = async (trId: number) => {
+  const tryOutRepository = AppDataSource.getRepository(TryOut);
+
+  const tryOut = await tryOutRepository.findOne({
+    where: { id: trId },
+  });
+
+  if (!tryOut) {
+    throw new Error(`TryOut with id ${trId} not found`);
+  }
+
+  await tryOutRepository.remove(tryOut);
+  return true;
+};
