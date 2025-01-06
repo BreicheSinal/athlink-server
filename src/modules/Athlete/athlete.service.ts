@@ -16,7 +16,9 @@ const clubRepository = AppDataSource.getRepository(Club);
 const userRepository = AppDataSource.getRepository(User);
 const trophyRepository = AppDataSource.getRepository(Trophy);
 const federationRepository = AppDataSource.getRepository(Federation);
-
+const experienceCertificationRepository = AppDataSource.getRepository(
+  ExperienceCertification
+);
 
 export const editProfileService = async (
   id: number,
@@ -87,41 +89,6 @@ export const addTrophyService = async (
   trophy.verification_status = "pending";
 
   return trophyRepository.save(trophy);
-};
-
-export const editExperienceCertificationService = async (
-  expId: number,
-  data: AddExperienceCertificationInput
-) => {
-  const experienceCertification =
-    await experienceCertificationRepository.findOne({
-      where: { id: expId },
-    });
-
-  if (!experienceCertification) {
-    throw new Error(`Experience with id ${expId} not found`);
-  }
-
-  experienceCertification.name = data.name;
-  experienceCertification.type = data.type;
-  experienceCertification.date = data.date;
-  experienceCertification.description = data.description ?? null;
-
-  return experienceCertificationRepository.save(experienceCertification);
-};
-
-export const deleteExperienceCertificationService = async (expId: number) => {
-  const experienceCertification =
-    await experienceCertificationRepository.findOne({
-      where: { id: expId },
-    });
-
-  if (!experienceCertification) {
-    throw new Error(`Experience with id ${expId} not found`);
-  }
-
-  await experienceCertificationRepository.remove(experienceCertification);
-  return true;
 };
 
 export const getAthleteService = async (id: number) => {
