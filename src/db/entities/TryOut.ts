@@ -17,22 +17,23 @@ export class TryOut {
     type: "bigint",
     unsigned: true,
   })
-  id!: number;
+  id: number;
 
   @ManyToOne(() => Club, (club) => club.id)
   @JoinColumn({ name: "club_id" })
-  club!: Club;
+  club: Club;
 
   @Column({
     type: "varchar",
     length: 255,
   })
-  name!: string;
+  name: string;
 
   @Column({
-    type: "datetime",
+    type: "varchar",
+    length: 100,
   })
-  date!: Date;
+  date: string;
 
   @Column({
     type: "text",
@@ -41,8 +42,8 @@ export class TryOut {
   description?: string;
 
   @CreateDateColumn({ type: "datetime" })
-  createdAt!: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: "datetime" })
-  updatedAt!: Date;
+  updated_at: Date;
 }
