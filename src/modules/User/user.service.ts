@@ -284,3 +284,17 @@ export const editExperienceCertificationService = async (
 
   return experienceCertificationRepository.save(experienceCertification);
 };
+
+export const deleteExperienceCertificationService = async (expId: number) => {
+  const experienceCertification =
+    await experienceCertificationRepository.findOne({
+      where: { id: expId },
+    });
+
+  if (!experienceCertification) {
+    throw new Error(`Experience with id ${expId} not found`);
+  }
+
+  await experienceCertificationRepository.remove(experienceCertification);
+  return true;
+};
