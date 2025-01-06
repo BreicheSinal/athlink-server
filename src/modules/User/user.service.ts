@@ -263,3 +263,24 @@ export const addExperienceCertificationService = async (
 
   return experienceCertificationRepository.save(experienceCertification);
 };
+
+export const editExperienceCertificationService = async (
+  expId: number,
+  data: AddExperienceCertificationInput
+) => {
+  const experienceCertification =
+    await experienceCertificationRepository.findOne({
+      where: { id: expId },
+    });
+
+  if (!experienceCertification) {
+    throw new Error(`Experience with id ${expId} not found`);
+  }
+
+  experienceCertification.name = data.name;
+  experienceCertification.type = data.type;
+  experienceCertification.date = data.date;
+  experienceCertification.description = data.description ?? null;
+
+  return experienceCertificationRepository.save(experienceCertification);
+};
