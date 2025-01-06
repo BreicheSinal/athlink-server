@@ -11,7 +11,6 @@ import {
   editProfileService,
   editBioService,
   addTrophyService,
-  addExperienceCertificationService,
   editExperienceCertificationService,
   deleteExperienceCertificationService,
   getAthleteService,
@@ -133,50 +132,6 @@ export const addTrophy = async (req: Request, res: Response) => {
     return res.status(201).json({
       message: "Trophy created successfully",
       trophy: createdTrophy,
-    });
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error occurred";
-    console.error(`Error: ${errorMessage}`);
-    return throwError({
-      message: errorMessage,
-      res,
-    });
-  }
-};
-
-export const addExperienceCertification = async (
-  req: Request,
-  res: Response
-) => {
-  try {
-    const { user_id } = req.params;
-
-    const parsedUserId = parseInt(user_id, 10);
-    if (isNaN(parsedUserId) || parsedUserId <= 0) {
-      return throwError({
-        message: "User ID must be a valid positive number",
-        res,
-        status: 400,
-      });
-    }
-
-    const result = addExperienceCertificationSchema.safeParse(req.body);
-    if (!result.success) {
-      return throwError({
-        message: "Validation error",
-        res,
-        status: 400,
-        details: result.error.format(),
-      });
-    }
-
-    const createdExperienceCertification =
-      await addExperienceCertificationService(parsedUserId, result.data);
-
-    return res.status(201).json({
-      message: `${result.data.type} created successfully`,
-      athlete: createdExperienceCertification,
     });
   } catch (error: unknown) {
     const errorMessage =

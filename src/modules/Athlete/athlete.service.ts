@@ -9,7 +9,6 @@ import {
   EditProfileInput,
   EditBioInput,
   AddTrophyInput,
-  AddExperienceCertificationInput,
 } from "../../utils/schemas/generalSchema";
 
 const athleteRepository = AppDataSource.getRepository(Athlete);
@@ -17,9 +16,7 @@ const clubRepository = AppDataSource.getRepository(Club);
 const userRepository = AppDataSource.getRepository(User);
 const trophyRepository = AppDataSource.getRepository(Trophy);
 const federationRepository = AppDataSource.getRepository(Federation);
-const experienceCertificationRepository = AppDataSource.getRepository(
-  ExperienceCertification
-);
+
 
 export const editProfileService = async (
   id: number,
@@ -90,26 +87,6 @@ export const addTrophyService = async (
   trophy.verification_status = "pending";
 
   return trophyRepository.save(trophy);
-};
-
-export const addExperienceCertificationService = async (
-  userId: number,
-  data: AddExperienceCertificationInput
-) => {
-  const user = await userRepository.findOne({ where: { id: userId } });
-
-  if (!user) {
-    throw new Error(`User with id ${userId} not found`);
-  }
-
-  const experienceCertification = new ExperienceCertification();
-  experienceCertification.user = user;
-  experienceCertification.name = data.name;
-  experienceCertification.type = data.type;
-  experienceCertification.date = data.date;
-  experienceCertification.description = data.description ?? null;
-
-  return experienceCertificationRepository.save(experienceCertification);
 };
 
 export const editExperienceCertificationService = async (
