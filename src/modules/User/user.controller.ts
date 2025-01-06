@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as connectionService from "./user.service";
 import { throwError, throwNotFound } from "../../utils/error";
+import { addExperienceCertificationSchema } from "../../utils/schemas/generalSchema";
 
 export const createConnection = async (req: Request, res: Response) => {
   try {
@@ -410,6 +411,53 @@ export const getChatMessages = async (req: Request, res: Response) => {
       message: error.message || "An unexpected error occurred",
       res,
       status: 400,
+    });
+  }
+};
+
+export const addExperienceCertification = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { user_id } = req.params;
+
+    const parsedUserId = parseInt(user_id, 10);
+    if (isNaN(parsedUserId) || parsedUserId <= 0) {
+      return throwError({
+        message: "User ID must be a valid positive number",
+        res,
+        status: 400,
+      });
+    }
+
+    const result = addExperienceCertificationSchema.safeParse(req.body);
+    if (!result.success) {
+      return throwError({
+        message: "Validation error",
+        res,
+        status: 400,
+        details: result.error.format(),
+      });
+    }
+
+    const createdExperienceCertification =
+      await connectionService.addExperienceCertificationService(
+        parsedUserId,
+        result.data
+      );
+
+    return res.status(201).json({
+      message: `${result.data.type} created successfully`,
+      athlete: createdExperienceCertification,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
     });
   }
 };
