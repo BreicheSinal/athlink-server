@@ -13,6 +13,7 @@ import {
   getClubByUserIDService,
   getClubsService,
   addTryOutService,
+  deleteTryOutService,
 } from "./club.service";
 
 export const editProfile = async (req: Request, res: Response) => {
@@ -236,7 +237,7 @@ export const getClubs = async (req: Request, res: Response) => {
   }
 };
 
-export const addTryout = async (req: Request, res: Response) => {
+export const addTryOut = async (req: Request, res: Response) => {
   try {
     const { clubId } = req.body;
 
@@ -264,6 +265,35 @@ export const addTryout = async (req: Request, res: Response) => {
     return res.status(201).json({
       message: "Tryout created successfully",
       tryout: createdTryout,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
+
+export const deleteTryOut = async (req: Request, res: Response) => {
+  try {
+    const { trID } = req.params;
+
+    const parsedTrID = parseInt(trID, 10);
+    if (isNaN(parsedTrID) || parsedTrID <= 0) {
+      return throwError({
+        message: "TryOut ID must be valid positive numbers",
+        res,
+        status: 400,
+      });
+    }
+
+    await deleteTryOutService(parsedTrID);
+
+    return res.status(200).json({
+      message: "TryOut deleted successfully",
     });
   } catch (error: unknown) {
     const errorMessage =
