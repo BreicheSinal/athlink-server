@@ -508,3 +508,35 @@ export const editExperienceCertification = async (
     });
   }
 };
+
+export const deleteExperienceCertification = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { exp_id } = req.params;
+
+    const parsedExpId = parseInt(exp_id, 10);
+    if (isNaN(parsedExpId) || parsedExpId <= 0) {
+      return throwError({
+        message: "Experience ID must be valid positive numbers",
+        res,
+        status: 400,
+      });
+    }
+
+    await connectionService.deleteExperienceCertificationService(parsedExpId);
+
+    return res.status(200).json({
+      message: "Experience deleted successfully",
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
