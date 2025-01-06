@@ -3,6 +3,7 @@ import { throwError, throwNotFound } from "../../utils/error";
 import {
   editProfileSchema,
   editBioSchema,
+  addTryoutSchema,
 } from "../../utils/schemas/generalSchema";
 import {
   editProfileService,
@@ -11,6 +12,7 @@ import {
   getClubService,
   getClubByUserIDService,
   getClubsService,
+  addTryOutService,
 } from "./club.service";
 
 export const editProfile = async (req: Request, res: Response) => {
@@ -163,7 +165,8 @@ export const getClub = async (req: Request, res: Response) => {
 
     return res.status(200).json({
       message: "Club fetched successfully",
-      club: club,
+      club: club.club,
+      tryOuts: club.tryOuts,
     });
   } catch (error: unknown) {
     const errorMessage =
@@ -221,6 +224,46 @@ export const getClubs = async (req: Request, res: Response) => {
     return res.status(200).json({
       message: "All clubs fetched successfully",
       clubs,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
+
+export const addTryout = async (req: Request, res: Response) => {
+  try {
+    const { clubId } = req.body;
+
+    const parsedClubId = parseInt(clubId, 10);
+    if (isNaN(parsedClubId) || parsedClubId <= 0) {
+      return throwError({
+        message: "Club ID must be a valid positive number",
+        res,
+        status: 400,
+      });
+    }
+
+    const result = addTryoutSchema.safeParse(req.body);
+    if (!result.success) {
+      return throwError({
+        message: "Validation error",
+        res,
+        status: 400,
+        details: result.error.format(),
+      });
+    }
+
+    const createdTryout = await addTryOutService(parsedClubId, result.data);
+
+    return res.status(201).json({
+      message: "Tryout created successfully",
+      tryout: createdTryout,
     });
   } catch (error: unknown) {
     const errorMessage =
