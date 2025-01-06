@@ -109,6 +109,15 @@ export const getAthleteService = async (id: number) => {
     order: {
       name: "ASC",
     },
+    select: {
+      id: true,
+      name: true,
+      type: false,
+      date: true,
+      description: true,
+      created_at: false,
+      updated_at: false,
+    },
   });
 
   return {
