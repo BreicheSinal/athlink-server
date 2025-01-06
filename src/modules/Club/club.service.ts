@@ -2,10 +2,14 @@ import { AppDataSource } from "../../db/connection";
 import { User } from "../../db/entities/User";
 import { Club } from "../../db/entities/Club";
 import { Coach } from "../../db/entities/Coach";
+import { TryOut } from "../../db/entities/TryOut";
 import {
   EditProfileInput,
   EditBioInput,
+  AddTryoutInput,
 } from "../../utils/schemas/generalSchema";
+import { Trophy } from "../../db/entities/Trophy";
+import { describe } from "node:test";
 
 const clubRepository = AppDataSource.getRepository(Club);
 const userRepository = AppDataSource.getRepository(User);
@@ -69,7 +73,27 @@ export const getClubService = async (id: number) => {
     throw new Error(`Club with id ${id} not found`);
   }
 
-  return club;
+  const tryOutRepository = AppDataSource.getRepository(TryOut);
+
+  const clubTr = await tryOutRepository.find({
+    where: {
+      club: { id },
+    },
+    order: {
+      name: "ASC",
+    },
+    select: {
+      id: true,
+      name: true,
+      date: true,
+      description: true,
+    },
+  });
+
+  return {
+    club,
+    tryOuts: clubTr,
+  };
 };
 
 export const getClubByUserIDService = async (id: number) => {
@@ -95,4 +119,25 @@ export const getClubsService = async () => {
   }
 
   return clubs;
+};
+
+export const addTryOutService = async (
+  clubId: number,
+  data: AddTryoutInput
+) => {
+  const tryOutRepository = AppDataSource.getRepository(TryOut);
+
+  const newTryOut = tryOutRepository.create({
+    name: data.name,
+    date: data.date,
+    description: data.description,
+    club: { id: clubId } as Club,
+  });
+
+  const savedTryOut = await tryOutRepository.save(newTryOut);
+
+  return tryOutRepository.findOne({
+    where: { id: savedTryOut.id },
+    relations: ["club"],
+  });
 };
