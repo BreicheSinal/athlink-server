@@ -3,11 +3,17 @@ import { Connection } from "../../db/entities/Connection";
 import { User } from "../../db/entities/User";
 import { Chat } from "../../db/entities/Chat";
 import { ChatMessage } from "../../db/entities/ChatMessage";
+import { ExperienceCertification } from "../../db/entities/ExperienceCertification";
+
+import { AddExperienceCertificationInput } from "../../utils/schemas/generalSchema";
 
 const connectionRepository = AppDataSource.getRepository(Connection);
 const userRepository = AppDataSource.getRepository(User);
 const chatRepository = AppDataSource.getRepository(Chat);
 const messageRepository = AppDataSource.getRepository(ChatMessage);
+const experienceCertificationRepository = AppDataSource.getRepository(
+  ExperienceCertification
+);
 
 export const createConnectionService = async (
   userId: number,
@@ -236,4 +242,24 @@ export const getChatMessagesService = async (
   });
 
   return formattedMessages;
+};
+
+export const addExperienceCertificationService = async (
+  userId: number,
+  data: AddExperienceCertificationInput
+) => {
+  const user = await userRepository.findOne({ where: { id: userId } });
+
+  if (!user) {
+    throw new Error(`User with id ${userId} not found`);
+  }
+
+  const experienceCertification = new ExperienceCertification();
+  experienceCertification.user = user;
+  experienceCertification.name = data.name;
+  experienceCertification.type = data.type;
+  experienceCertification.date = data.date;
+  experienceCertification.description = data.description ?? null;
+
+  return experienceCertificationRepository.save(experienceCertification);
 };
