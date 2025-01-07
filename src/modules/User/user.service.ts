@@ -87,7 +87,18 @@ export const getAcceptedConnectionsService = async (userId: number) => {
       { user_id: userId, status: "accepted" },
       { connected_user_id: userId, status: "accepted" },
     ],
-    relations: ["user", "connectedUser"],
+    relations: {
+      user: {
+        userRoles: {
+          role: true,
+        },
+      },
+      connectedUser: {
+        userRoles: {
+          role: true,
+        },
+      },
+    },
   });
 
   return connections.map((connection) => ({
@@ -95,10 +106,12 @@ export const getAcceptedConnectionsService = async (userId: number) => {
     user: {
       id: connection.user.id,
       name: connection.user.name,
+      role: connection.user.userRoles[0]?.role?.role_name || "", 
     },
     connectedUser: {
       id: connection.connectedUser.id,
       name: connection.connectedUser.name,
+      role: connection.connectedUser.userRoles[0]?.role?.role_name || "", 
     },
   }));
 };
