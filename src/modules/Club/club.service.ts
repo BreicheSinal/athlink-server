@@ -8,8 +8,6 @@ import {
   EditBioInput,
   AddTryoutInput,
 } from "../../utils/schemas/generalSchema";
-import { Trophy } from "../../db/entities/Trophy";
-import { describe } from "node:test";
 
 const clubRepository = AppDataSource.getRepository(Club);
 const userRepository = AppDataSource.getRepository(User);
@@ -54,6 +52,25 @@ export const editBioService = async (id: number, data: EditBioInput) => {
 export const getStaffService = async (id: number) => {
   const staff = await coachRepository.find({
     where: { club: { id } },
+    relations: ["user"],
+    order: {
+      user: {
+        name: "ASC",
+      },
+    },
+    select: {
+      id: true,
+      specialty: true,
+      created_at: false,
+      updated_at: false,
+      user: {
+        id: false,
+        name: true,
+        email: false,
+        created_at: false,
+        updated_at: false,
+      },
+    },
   });
 
   if (staff.length === 0) {
