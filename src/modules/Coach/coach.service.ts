@@ -2,6 +2,7 @@ import { AppDataSource } from "../../db/connection";
 import { Coach } from "../../db/entities/Coach";
 import { User } from "../../db/entities/User";
 import { Club } from "../../db/entities/Club";
+import { ExperienceCertification } from "../../db/entities/ExperienceCertification";
 import {
   EditProfileInput,
   EditBioInput,
@@ -10,6 +11,9 @@ import {
 const coachRepository = AppDataSource.getRepository(Coach);
 const userRepository = AppDataSource.getRepository(User);
 const clubRepository = AppDataSource.getRepository(Club);
+const experienceCertificationRepository = AppDataSource.getRepository(
+  ExperienceCertification
+);
 
 export const editProfileService = async (
   id: number,
@@ -66,7 +70,49 @@ export const getCoachService = async (id: number) => {
     throw new Error(`Coach with id ${id} not found`);
   }
 
-  return coach;
+  const coachExp = await experienceCertificationRepository.find({
+    where: {
+      user: { id: coach[0].user.id },
+      type: "experience",
+    },
+    order: {
+      name: "ASC",
+    },
+    select: {
+      id: true,
+      name: true,
+      type: false,
+      date: true,
+      description: true,
+      created_at: false,
+      updated_at: false,
+    },
+  });
+
+  const coachCert = await experienceCertificationRepository.find({
+    where: {
+      user: { id: coach[0].user.id },
+      type: "certification",
+    },
+    order: {
+      name: "ASC",
+    },
+    select: {
+      id: true,
+      name: true,
+      type: false,
+      date: true,
+      description: true,
+      created_at: false,
+      updated_at: false,
+    },
+  });
+
+  return {
+    coach,
+    experience: coachExp,
+    certificate: coachCert,
+  };
 };
 
 export const getCoachByUserIDService = async (id: number) => {
