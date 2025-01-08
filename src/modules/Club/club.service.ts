@@ -84,6 +84,22 @@ export const getClubService = async (id: number) => {
   const club = await clubRepository.find({
     where: { id },
     relations: ["user", "federation", "federation.user"],
+    select: {
+      id: true,
+      location: true,
+      founded_year:true,
+      user: {
+        id: true,
+        name: true,
+      },
+      federation: {
+        id: true,
+        user: {
+          id: true,
+          name: true,
+        },
+      },
+    },
   });
 
   if (club.length === 0) {
