@@ -174,7 +174,7 @@ export const getFederations = async (req: Request, res: Response) => {
       const federations = await getFederationsService();
       return res.status(200).json({
         message: "Federations fetched successfully",
-        clubs: federations,
+        federations: federations,
       });
     } catch (error) {
       if (error instanceof Error && error.message.includes("not found")) {
