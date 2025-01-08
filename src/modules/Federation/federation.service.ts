@@ -51,6 +51,14 @@ export const editBioService = async (id: number, data: EditBioInput) => {
 export const getClubsService = async (federationId: number) => {
   const clubs = await clubRepository.find({
     where: { federation: { id: federationId } },
+    relations: ["user"],
+    select: {
+      id: true,
+      user: {
+        id: true,
+        name: true,
+      },
+    },
   });
 
   if (clubs.length === 0) {
@@ -61,7 +69,15 @@ export const getClubsService = async (federationId: number) => {
 };
 
 export const getFederationsService = async () => {
-  const federations = await federationRepository.find();
+  const federations = await federationRepository.find({
+    relations: ["user"],
+    select: {
+      id: true,
+      user: {
+        name: true,
+      },
+    },
+  });
 
   if (federations.length === 0) {
     throw new Error("Federations not found");
