@@ -8,7 +8,7 @@ import {
   editProfileService,
   editBioService,
   getCoachService,
-  getCoachByUserIDService
+  getCoachByUserIDService,
 } from "./coach.service";
 
 export const editProfile = async (req: Request, res: Response) => {
@@ -143,7 +143,9 @@ export const getCoach = async (req: Request, res: Response) => {
       const coach = await getCoachService(parsedId);
       return res.status(200).json({
         message: "Coach fetched successfully",
-        coach: coach,
+        coach: coach.coach,
+        experience: coach.experience,
+        certificate: coach.certificate,
       });
     } catch (error) {
       if (error instanceof Error && error.message.includes("not found")) {
