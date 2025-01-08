@@ -87,10 +87,11 @@ export const getClubService = async (id: number) => {
     select: {
       id: true,
       location: true,
-      founded_year:true,
+      founded_year: true,
       user: {
         id: true,
         name: true,
+        bio: true,
       },
       federation: {
         id: true,
