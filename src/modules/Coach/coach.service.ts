@@ -81,11 +81,8 @@ export const getCoachService = async (id: number) => {
     select: {
       id: true,
       name: true,
-      type: false,
       date: true,
       description: true,
-      created_at: false,
-      updated_at: false,
     },
   });
 
@@ -100,11 +97,8 @@ export const getCoachService = async (id: number) => {
     select: {
       id: true,
       name: true,
-      type: false,
       date: true,
       description: true,
-      created_at: false,
-      updated_at: false,
     },
   });
 
@@ -125,5 +119,41 @@ export const getCoachByUserIDService = async (id: number) => {
     throw new Error(`Coach with id ${id} not found`);
   }
 
-  return coach;
+  const coachExp = await experienceCertificationRepository.find({
+    where: {
+      user: { id: coach[0].user.id },
+      type: "experience",
+    },
+    order: {
+      name: "ASC",
+    },
+    select: {
+      id: true,
+      name: true,
+      date: true,
+      description: true,
+    },
+  });
+
+  const coachCert = await experienceCertificationRepository.find({
+    where: {
+      user: { id: coach[0].user.id },
+      type: "certification",
+    },
+    order: {
+      name: "ASC",
+    },
+    select: {
+      id: true,
+      name: true,
+      date: true,
+      description: true,
+    },
+  });
+
+  return {
+    coach,
+    experience: coachExp,
+    certificate: coachCert,
+  };
 };
