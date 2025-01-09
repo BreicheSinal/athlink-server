@@ -193,7 +193,9 @@ export const getCoachUserID = async (req: Request, res: Response) => {
       const coach = await getCoachByUserIDService(parsedId);
       return res.status(200).json({
         message: "Coach fetched successfully",
-        coach: coach,
+        coach: coach.coach,
+        experience: coach.experience,
+        certificate: coach.certificate,
       });
     } catch (error) {
       if (error instanceof Error && error.message.includes("not found")) {
