@@ -3,6 +3,7 @@ import { User } from "../../db/entities/User";
 import { Club } from "../../db/entities/Club";
 import { Coach } from "../../db/entities/Coach";
 import { TryOut } from "../../db/entities/TryOut";
+import { Federation } from "../../db/entities/Federation";
 import {
   EditProfileInput,
   EditBioInput,
@@ -12,6 +13,7 @@ import {
 const clubRepository = AppDataSource.getRepository(Club);
 const userRepository = AppDataSource.getRepository(User);
 const coachRepository = AppDataSource.getRepository(Coach);
+const federationRepository = AppDataSource.getRepository(Federation);
 
 export const editProfileService = async (
   id: number,
@@ -23,6 +25,18 @@ export const editProfileService = async (
 
   if (!club) {
     throw new Error(`Club with id ${id} not found`);
+  }
+
+  if (data.federation_id !== null && data.federation_id !== undefined) {
+    const federation = await federationRepository.findOne({
+      where: { id: data.federation_id },
+    });
+    if (!federation) {
+      throw new Error(`Federation with id ${data.federation_id} not found`);
+    }
+    club.federation = federation;
+  } else {
+    club.federation = null;
   }
 
   club.location = data.location ?? null;
@@ -72,10 +86,6 @@ export const getStaffService = async (id: number) => {
       },
     },
   });
-
-  if (staff.length === 0) {
-    throw new Error(`Staff with club id ${id} not found`);
-  }
 
   return staff;
 };
