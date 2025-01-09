@@ -60,8 +60,12 @@ export const updateConnectionStatusService = async (
     throw new Error("Connection request not found");
   }
 
-  connection.status = status;
-  return connectionRepository.save(connection);
+  if (status === "rejected") {
+    return connectionRepository.remove(connection);
+  } else {
+    connection.status = status;
+    return connectionRepository.save(connection);
+  }
 };
 
 export const getConnectionsService = async (userId: number) => {
