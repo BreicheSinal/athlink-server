@@ -126,6 +126,10 @@ export const getStaff = async (req: Request, res: Response) => {
 
     const staff = await getStaffService(parsedId);
 
+    if (staff.length === 0) {
+      return res.status(204).send();
+    }
+
     return res.status(200).json({
       message: "Staff fetched successfully",
       coaches: staff,
