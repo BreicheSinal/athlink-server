@@ -82,7 +82,6 @@ export const getPendingConnectionsService = async (userId: number) => {
 
   return connections.map(({ user, connectedUser }) => ({
     user: { id: user.id, name: user.name },
-    connectedUser: { id: connectedUser.id, name: connectedUser.name },
   }));
 };
 
