@@ -106,12 +106,12 @@ export const getAcceptedConnectionsService = async (userId: number) => {
     user: {
       id: connection.user.id,
       name: connection.user.name,
-      role: connection.user.userRoles[0]?.role?.role_name || "", 
+      role: connection.user.userRoles[0]?.role?.role_name || "",
     },
     connectedUser: {
       id: connection.connectedUser.id,
       name: connection.connectedUser.name,
-      role: connection.connectedUser.userRoles[0]?.role?.role_name || "", 
+      role: connection.connectedUser.userRoles[0]?.role?.role_name || "",
     },
   }));
 };
