@@ -28,6 +28,12 @@ export const editProfileSchema = z.object({
     .optional(),
 
   // club | federation
+  federation_id: z
+    .number()
+    .int()
+    .positive("Federation ID must be a positive number")
+    .nullable()
+    .optional(),
   location: z.string().max(255).optional(),
   founded_year: z.number().int().positive().optional(),
 
