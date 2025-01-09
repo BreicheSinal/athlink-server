@@ -128,10 +128,9 @@ export const getConnections = async (req: Request, res: Response) => {
 
 export const getPendingConnections = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.body;
+    const userId = parseInt(req.params.userId);
 
-    const parsedID = parseInt(userId, 10);
-    if (isNaN(parsedID) || parsedID <= 0) {
+    if (isNaN(userId) || userId <= 0) {
       return throwError({
         message: `Invalid user ID: ${userId}`,
         res,
@@ -140,7 +139,7 @@ export const getPendingConnections = async (req: Request, res: Response) => {
     }
 
     const connections = await connectionService.getPendingConnectionsService(
-      parsedID
+      userId
     );
 
     if (connections.length === 0) {
