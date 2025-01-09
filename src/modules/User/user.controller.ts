@@ -149,7 +149,7 @@ export const getPendingConnections = async (req: Request, res: Response) => {
       });
     }
 
-    return res.status(201).json({
+    return res.status(200).json({
       message: "Fetched pending connections successfully",
       connections,
     });
