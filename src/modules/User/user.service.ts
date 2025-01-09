@@ -72,13 +72,18 @@ export const getConnectionsService = async (userId: number) => {
 };
 
 export const getPendingConnectionsService = async (userId: number) => {
-  return connectionRepository.find({
+  const connections = await connectionRepository.find({
     where: {
       connected_user_id: userId,
       status: "pending",
     },
     relations: ["user", "connectedUser"],
   });
+
+  return connections.map(({ user, connectedUser }) => ({
+    user: { id: user.id, name: user.name },
+    connectedUser: { id: connectedUser.id, name: connectedUser.name },
+  }));
 };
 
 export const getAcceptedConnectionsService = async (userId: number) => {
