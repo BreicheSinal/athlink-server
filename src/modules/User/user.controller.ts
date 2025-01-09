@@ -143,10 +143,7 @@ export const getPendingConnections = async (req: Request, res: Response) => {
     );
 
     if (connections.length === 0) {
-      return throwNotFound({
-        entity: "Pending connections",
-        res,
-      });
+      return res.status(204).send();
     }
 
     return res.status(200).json({
@@ -189,7 +186,7 @@ export const getAcceptedConnections = async (req: Request, res: Response) => {
     });
   } catch (error) {
     throwError({
-      message: "Failed to fetch pending connections",
+      message: "Failed to fetch accepted connections",
       res,
       status: 500,
       details: error,
