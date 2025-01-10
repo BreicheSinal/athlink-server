@@ -41,6 +41,12 @@ export class TryOut {
   })
   description?: string;
 
+  @Column({ nullable: true })
+  meetingRoom: string;
+
+  @Column({ nullable: true })
+  meetingUrl: string;
+
   @CreateDateColumn({ type: "datetime" })
   created_at: Date;
 
