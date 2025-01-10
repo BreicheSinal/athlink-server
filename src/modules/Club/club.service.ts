@@ -10,6 +10,11 @@ import {
   AddTryoutInput,
 } from "../../utils/schemas/generalSchema";
 
+import axios from "axios";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 const clubRepository = AppDataSource.getRepository(Club);
 const userRepository = AppDataSource.getRepository(User);
 const coachRepository = AppDataSource.getRepository(Coach);
@@ -131,6 +136,7 @@ export const getClubService = async (id: number) => {
       name: true,
       date: true,
       description: true,
+      meetingUrl: true,
     },
   });
 
@@ -165,17 +171,59 @@ export const getClubsService = async () => {
   return clubs;
 };
 
+export const createMeeting = async (tryoutName: string, startDate: Date) => {
+  try {
+
+    // Removed spaces/underscores - Converted to lowercase
+    const sanitizedName = tryoutName
+      .replace(/\s+/g, "_") 
+      .replace(/[^a-zA-Z0-9-_]/g, "") 
+      .toLowerCase(); 
+
+    const roomName = `tryout-${sanitizedName}-${Date.now()}`;
+
+    const response = await axios.post(
+      "https://api.daily.co/v1/rooms",
+      {
+        name: roomName,
+        properties: {
+          exp: Math.floor(startDate.getTime() / 1000),
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return {
+      room: response.data.name,
+      url: response.data.url,
+    };
+  } catch (error) {
+    console.error("Error creating Daily meeting:", error);
+    throw new Error("Failed to create meeting room");
+  }
+};
+
 export const addTryOutService = async (
   clubId: number,
   data: AddTryoutInput
 ) => {
   const tryOutRepository = AppDataSource.getRepository(TryOut);
 
+  const meetingDate = new Date(data.date);
+  const { room, url } = await createMeeting(data.name, meetingDate);
+
   const newTryOut = tryOutRepository.create({
     name: data.name,
     date: data.date,
     description: data.description,
     club: { id: clubId } as Club,
+    meetingRoom: room,
+    meetingUrl: url,
   });
 
   const savedTryOut = await tryOutRepository.save(newTryOut);
