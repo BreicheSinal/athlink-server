@@ -170,6 +170,7 @@ export const getAthlete = async (req: Request, res: Response) => {
       message: "Athlete fetched successfully",
       athlete: result.athlete,
       experience: result.experience,
+      tryOuts: result.tryOuts,
     });
   } catch (error: unknown) {
     const errorMessage =
