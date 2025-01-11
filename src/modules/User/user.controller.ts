@@ -536,3 +536,26 @@ export const deleteExperienceCertification = async (
     });
   }
 };
+
+export const getTryOuts = async (req: Request, res: Response) => {
+  try {
+    const tryOuts = await connectionService.getTryOutsService();
+
+    if (tryOuts.length === 0) {
+      return res.status(204).send();
+    }
+
+    res.status(200).json({
+      message: "Fetched TryOuts Successfully",
+      tryOuts,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
