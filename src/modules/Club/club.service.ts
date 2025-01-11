@@ -171,14 +171,13 @@ export const getClubsService = async () => {
   return clubs;
 };
 
-export const createMeeting = async (tryoutName: string, startDate: Date) => {
+const createMeeting = async (tryoutName: string, startDate: Date) => {
   try {
-
     // Removed spaces/underscores - Converted to lowercase
     const sanitizedName = tryoutName
-      .replace(/\s+/g, "_") 
-      .replace(/[^a-zA-Z0-9-_]/g, "") 
-      .toLowerCase(); 
+      .replace(/\s+/g, "_")
+      .replace(/[^a-zA-Z0-9-_]/g, "")
+      .toLowerCase();
 
     const roomName = `tryout-${sanitizedName}-${Date.now()}`;
 
@@ -234,6 +233,20 @@ export const addTryOutService = async (
   });
 };
 
+const deleteMeeting = async (roomName: string): Promise<void> => {
+  try {
+    await axios.delete(`https://api.daily.co/v1/rooms/${roomName}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.API_KEY}`,
+        "Content-Type": "application/json",
+            },
+    });
+  } catch (error) {
+    console.error("Error deleting Daily meeting:", error);
+    throw new Error("Failed to delete meeting room");
+  }
+};
+
 export const deleteTryOutService = async (trId: number) => {
   const tryOutRepository = AppDataSource.getRepository(TryOut);
 
@@ -245,6 +258,14 @@ export const deleteTryOutService = async (trId: number) => {
     throw new Error(`TryOut with id ${trId} not found`);
   }
 
+  try {
+    await deleteMeeting(tryOut.meetingRoom.toLocaleLowerCase());
+  } catch (error: any) {
+    console.error("Error deleting meeting in Daily:", error.message);
+    throw new Error("Failed to delete associated meeting room");
+  }
+
   await tryOutRepository.remove(tryOut);
+
   return true;
 };
