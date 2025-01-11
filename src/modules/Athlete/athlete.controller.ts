@@ -13,6 +13,7 @@ import {
   addTrophyService,
   getAthleteService,
   getAthleteByUserIDService,
+  applyTryOutService,
 } from "./athlete.service";
 
 export const editProfile = async (req: Request, res: Response) => {
@@ -208,6 +209,48 @@ export const getAthleteUserID = async (req: Request, res: Response) => {
       message: "Athlete fetched successfully",
       athlete: result.athlete,
       experience: result.experience,
+    });
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
+
+export const applyTryOut = async (req: Request, res: Response) => {
+  try {
+    const { athlete_id, try_out_id } = req.body;
+
+    const parsedAthleteId = parseInt(athlete_id, 10);
+    if (isNaN(parsedAthleteId) || parsedAthleteId <= 0) {
+      return throwError({
+        message: `Invalid athlete ID: ${parsedAthleteId}`,
+        res,
+        status: 400,
+      });
+    }
+
+    const parsedTryOutId = parseInt(try_out_id, 10);
+    if (isNaN(parsedTryOutId) || parsedTryOutId <= 0) {
+      return throwError({
+        message: `Invalid tryout ID: ${parsedTryOutId}`,
+        res,
+        status: 400,
+      });
+    }
+
+    const createdTryOut = await applyTryOutService(
+      parsedAthleteId,
+      parsedTryOutId
+    );
+
+    return res.status(201).json({
+      message: "TryOut application created successfully",
+      createdTryOut,
     });
   } catch (error: unknown) {
     const errorMessage =
