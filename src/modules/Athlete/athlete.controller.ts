@@ -251,7 +251,7 @@ export const applyTryOut = async (req: Request, res: Response) => {
 
     return res.status(201).json({
       message: "TryOut application created successfully",
-      createdTryOut,
+      createdTryOut: createdTryOut.createdTryOut,
     });
   } catch (error: unknown) {
     const errorMessage =
