@@ -126,7 +126,13 @@ export const getAthleteService = async (id: number) => {
     where: {
       athlete: { id: id },
     },
-    relations: ["tryOut"],
+    relations: {
+      tryOut: {
+        club: {
+          user: true,
+        },
+      },
+    },
     select: {
       id: true,
       status: true,
@@ -149,6 +155,9 @@ export const getAthleteService = async (id: number) => {
       date: tr.tryOut.date,
       description: tr.tryOut.description,
       meetingUrl: tr.tryOut.meetingUrl,
+      club_id: tr.tryOut.club.id,
+      club_name: tr.tryOut.club.user.name,
+      club_user_id: tr.tryOut.club.user.id,
     };
   });
 
@@ -195,5 +204,37 @@ export const applyTryOutService = async (
     status: "pending",
   });
 
-  return athleteTrRepo.save(newTryOut);
+  const savedTryOut = await athleteTrRepo.save(newTryOut);
+
+  const completeData = await athleteTrRepo.findOne({
+    where: { id: savedTryOut.id },
+    relations: {
+      tryOut: {
+        club: {
+          user: true,
+        },
+      },
+    },
+  });
+
+  if (!completeData) {
+    throw new Error("Failed to load complete tryout data");
+  }
+
+  const createdTryOut = {
+    id: savedTryOut.id,
+    status: completeData.status,
+    trId: completeData.tryOut.id.toString(),
+    name: completeData.tryOut.name,
+    date: completeData.tryOut.date,
+    description: completeData.tryOut.description,
+    meetingUrl: completeData.tryOut.meetingUrl,
+    club_id: completeData.tryOut.club.id,
+    club_name: completeData.tryOut.club.user.name,
+    club_user_id: completeData.tryOut.club.user.id,
+  };
+
+  return {
+    createdTryOut,
+  };
 };
