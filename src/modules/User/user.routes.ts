@@ -14,6 +14,7 @@ import {
   addExperienceCertification,
   editExperienceCertification,
   deleteExperienceCertification,
+  getTryOuts,
 } from "./user.controller";
 
 const router = Router();
@@ -27,6 +28,7 @@ router.put("/:connectedUserId", updateConnectionStatus as any);
 router.put("/editExpCert/:exp_id", editExperienceCertification as any);
 
 router.get("/", getConnections as any);
+router.get("/tryOuts", getTryOuts as any);
 router.get("/pending/:userId", getPendingConnections as any);
 router.get("/accepted/:userId", getAcceptedConnections as any);
 router.get("/:currentUserId/search", searchUsers as any);
