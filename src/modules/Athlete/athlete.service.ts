@@ -122,9 +122,40 @@ export const getAthleteService = async (id: number) => {
     },
   });
 
+  const atheleteTr = await athleteTrRepo.find({
+    where: {
+      athlete: { id: id },
+    },
+    relations: ["tryOut"],
+    select: {
+      id: true,
+      status: true,
+      tryOut: {
+        id: true,
+        name: true,
+        date: true,
+        description: true,
+        meetingUrl: true,
+      },
+    },
+  });
+
+  const formattedAthleteTr = atheleteTr.map((tr) => {
+    return {
+      id: tr.id,
+      status: tr.status,
+      trId: tr.tryOut.id,
+      name: tr.tryOut.name,
+      date: tr.tryOut.date,
+      description: tr.tryOut.description,
+      meetingUrl: tr.tryOut.meetingUrl,
+    };
+  });
+
   return {
     athlete,
     experience: athleteExp,
+    tryOuts: formattedAthleteTr,
   };
 };
 
