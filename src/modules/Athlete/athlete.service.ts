@@ -5,12 +5,14 @@ import { User } from "../../db/entities/User";
 import { Trophy } from "../../db/entities/Trophy";
 import { Federation } from "../../db/entities/Federation";
 import { ExperienceCertification } from "../../db/entities/ExperienceCertification";
+import { AthleteTryOutApplication } from "../../db/entities/AthleteTryOutApplication ";
 import {
   EditProfileInput,
   EditBioInput,
   AddTrophyInput,
 } from "../../utils/schemas/generalSchema";
 
+const athleteTrRepo = AppDataSource.getRepository(AthleteTryOutApplication);
 const athleteRepository = AppDataSource.getRepository(Athlete);
 const clubRepository = AppDataSource.getRepository(Club);
 const userRepository = AppDataSource.getRepository(User);
@@ -150,4 +152,17 @@ export const getAthleteByUserIDService = async (id: number) => {
     athlete,
     experience: athleteExp,
   };
+};
+
+export const applyTryOutService = async (
+  athleteId: number,
+  tryoutId: number
+) => {
+  const newTryOut = athleteTrRepo.create({
+    athlete: { id: athleteId },
+    tryOut: { id: tryoutId },
+    status: "pending",
+  });
+
+  return athleteTrRepo.save(newTryOut);
 };
