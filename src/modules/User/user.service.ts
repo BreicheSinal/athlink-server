@@ -4,9 +4,10 @@ import { User } from "../../db/entities/User";
 import { Chat } from "../../db/entities/Chat";
 import { ChatMessage } from "../../db/entities/ChatMessage";
 import { ExperienceCertification } from "../../db/entities/ExperienceCertification";
-
+import { TryOut } from "../../db/entities/TryOut";
 import { AddExperienceCertificationInput } from "../../utils/schemas/generalSchema";
 
+const tryOutRepository = AppDataSource.getRepository(TryOut);
 const connectionRepository = AppDataSource.getRepository(Connection);
 const userRepository = AppDataSource.getRepository(User);
 const chatRepository = AppDataSource.getRepository(Chat);
@@ -84,7 +85,7 @@ export const getPendingConnectionsService = async (userId: number) => {
     relations: ["user", "connectedUser"],
   });
 
-  return connections.map(({ user, connectedUser }) => ({
+  return connections.map(({ user }) => ({
     user: { id: user.id, name: user.name },
   }));
 };
@@ -318,4 +319,37 @@ export const deleteExperienceCertificationService = async (expId: number) => {
 
   await experienceCertificationRepository.remove(experienceCertification);
   return true;
+};
+
+export const getTryOutsService = async () => {
+  const tryOuts = await tryOutRepository.find({
+    relations: ["club", "club.user"],
+    select: {
+      id: true,
+      name: true,
+      date: true,
+      description: true,
+      meetingUrl: true,
+      club: {
+        id: true,
+        user: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+
+  const formattedTryOuts = tryOuts.map((tryout) => ({
+    id: tryout.id,
+    name: tryout.name,
+    date: tryout.date,
+    description: tryout.description,
+    meetingUrl: tryout.meetingUrl,
+    club_id: tryout.club.id,
+    club_user_id: tryout.club.user.id,
+    club_name: tryout.club.user.name,
+  }));
+
+  return formattedTryOuts;
 };
