@@ -8,6 +8,7 @@ import {
   getClubs,
   addTryOut,
   deleteTryOut,
+  getApplications,
 } from "./club.controller";
 
 const router = Router();
@@ -17,6 +18,7 @@ router.put("/editBio/:id", editBio as any);
 
 router.post("/tryouts", addTryOut as any);
 
+router.get("/applications/:clubId", getApplications as any);
 router.get("/getStaff/:id", getStaff as any);
 router.get("/:id", getClub as any);
 router.get("/user/:id", getClubUserID as any);
