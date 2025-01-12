@@ -4,6 +4,7 @@ import { Club } from "../../db/entities/Club";
 import { Coach } from "../../db/entities/Coach";
 import { TryOut } from "../../db/entities/TryOut";
 import { Federation } from "../../db/entities/Federation";
+import { AthleteTryOutApplication } from "../../db/entities/AthleteTryOutApplication ";
 import {
   EditProfileInput,
   EditBioInput,
@@ -15,6 +16,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const athleteTrRepo = AppDataSource.getRepository(AthleteTryOutApplication);
 const clubRepository = AppDataSource.getRepository(Club);
 const userRepository = AppDataSource.getRepository(User);
 const coachRepository = AppDataSource.getRepository(Coach);
@@ -239,7 +241,7 @@ const deleteMeeting = async (roomName: string): Promise<void> => {
       headers: {
         Authorization: `Bearer ${process.env.API_KEY}`,
         "Content-Type": "application/json",
-            },
+      },
     });
   } catch (error) {
     console.error("Error deleting Daily meeting:", error);
@@ -268,4 +270,58 @@ export const deleteTryOutService = async (trId: number) => {
   await tryOutRepository.remove(tryOut);
 
   return true;
+};
+
+export const getApplicationService = async (clubId: number) => {
+  const applications = await athleteTrRepo.find({
+    relations: {
+      athlete: {
+        user: true,
+      },
+      tryOut: {
+        club: true,
+      },
+    },
+    where: {
+      tryOut: {
+        club: {
+          id: clubId,
+        },
+      },
+    },
+    select: {
+      id: true,
+      status: true,
+      athlete: {
+        id: true,
+        user: {
+          id: true,
+          name: true,
+        },
+      },
+      tryOut: {
+        id: true,
+        name: true,
+        club: {
+          id: false,
+          location: false,
+          founded_year: false,
+          created_at: false,
+          updated_at: false,
+        },
+      },
+    },
+  });
+
+  const formattedResponse = applications.map((app) => ({
+    id: app.id,
+    status: app.status,
+    athleteId: app.athlete.id,
+    athlete_userId: app.athlete.user.id,
+    athlete_name: app.athlete.user.name,
+    trId: app.tryOut.id,
+    tr_club_name: app.tryOut.name,
+  }));
+
+  return formattedResponse;
 };
