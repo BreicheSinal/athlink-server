@@ -14,6 +14,7 @@ import {
   getClubsService,
   addTryOutService,
   deleteTryOutService,
+  getApplicationService,
 } from "./club.service";
 
 export const editProfile = async (req: Request, res: Response) => {
@@ -300,6 +301,28 @@ export const deleteTryOut = async (req: Request, res: Response) => {
       message: "TryOut deleted successfully",
     });
   } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error: ${errorMessage}`);
+    return throwError({
+      message: errorMessage,
+      res,
+    });
+  }
+};
+
+export const getApplications = async (req: Request, res: Response) => {
+  try {
+    const { clubId } = req.params;
+
+    const parsedClubId = parseInt(clubId);
+    const applications = await getApplicationService(parsedClubId);
+
+    return res.status(200).json({
+      message: "Fetched application successfully",
+      applications,
+    });
+  } catch (error: any) {
     const errorMessage =
       error instanceof Error ? error.message : "Unknown error occurred";
     console.error(`Error: ${errorMessage}`);
