@@ -27,13 +27,19 @@ export class PostMedia {
     enum: ["image", "video"],
     nullable: false,
   })
-  mediaType: "image" | "video";
+  media_type: "image" | "video";
 
   @Column({
     type: "text",
     nullable: false,
   })
-  mediaUrl: string;
+  media_url: string;
+
+  @Column({
+    type: "text",
+    nullable: false,
+  })
+  storage_path: string;
 
   @CreateDateColumn({ type: "datetime" })
   created_at: Date;
