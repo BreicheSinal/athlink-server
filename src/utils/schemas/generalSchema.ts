@@ -113,3 +113,23 @@ export const ApplicationStatus = z.enum(["accepted", "rejected", "pending"], {
 });
 
 export type ApplicationStatus = z.infer<typeof ApplicationStatus>;
+
+const MediaFileSchema = z.object({
+  type: z.enum(["image", "video"]),
+  url: z.string().url("Invalid media URL"),
+});
+
+export const createPostSchema = z.object({
+  description: z
+    .string()
+    .min(1, "Post description cannot be empty")
+    .max(2000, "Post description cannot exceed 2000 characters")
+    .optional(),
+  mediaFiles: z
+    .array(MediaFileSchema)
+    .min(0)
+    .max(5, "Cannot upload more than 5 media files")
+    .optional(),
+});
+
+export type CreatePostInput = z.infer<typeof createPostSchema>;
