@@ -9,12 +9,14 @@ import {
   addTryOut,
   deleteTryOut,
   getApplications,
+  updateApplicationStatus,
 } from "./club.controller";
 
 const router = Router();
 
 router.put("/editProfile/:id", editProfile as any);
 router.put("/editBio/:id", editBio as any);
+router.put("/update/applications/:applicationId", updateApplicationStatus as any);
 
 router.post("/tryouts", addTryOut as any);
 
