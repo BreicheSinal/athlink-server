@@ -9,6 +9,7 @@ import {
   EditProfileInput,
   EditBioInput,
   AddTryoutInput,
+  ApplicationStatus,
 } from "../../utils/schemas/generalSchema";
 
 import axios from "axios";
@@ -324,4 +325,25 @@ export const getApplicationService = async (clubId: number) => {
   }));
 
   return formattedResponse;
+};
+
+export const updateApplicationStatusService = async (
+  applicationId: number,
+  action: ApplicationStatus
+) => {
+  const application = await athleteTrRepo.findOne({
+    where: { id: applicationId },
+    select: {
+      id: true,
+      status: true,
+    },
+  });
+
+  if (!application) {
+    throw new Error(`Application with id ${applicationId} not found`);
+  }
+
+  application.status = action;
+
+  return athleteTrRepo.save(application);
 };
