@@ -34,14 +34,14 @@ export class Post {
     unsigned: true,
     default: 0,
   })
-  likesCount: number;
+  likes_count: number;
 
   @Column({
     type: "int",
     unsigned: true,
     default: 0,
   })
-  commentsCount: number;
+  comments_count: number;
 
   @CreateDateColumn({ type: "datetime" })
   created_at: Date;
