@@ -105,3 +105,11 @@ export const addTryoutSchema = z.object({
 });
 
 export type AddTryoutInput = z.infer<typeof addTryoutSchema>;
+
+export const ApplicationStatus = z.enum(["accepted", "rejected", "pending"], {
+  errorMap: () => ({
+    message: "Status must be 'accepted', 'rejected', or 'pending'",
+  }),
+});
+
+export type ApplicationStatus = z.infer<typeof ApplicationStatus>;
