@@ -11,31 +11,30 @@ import {
 import { Post } from "./Post";
 
 @Entity("post_media")
-@Index(["post"])
 export class PostMedia {
   @PrimaryGeneratedColumn("increment", {
     type: "bigint",
     unsigned: true,
   })
-  id!: number;
+  id: number;
 
   @ManyToOne(() => Post, (post) => post.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "post_id" })
-  post!: Post;
+  post: Post;
 
   @Column({
     type: "enum",
     enum: ["image", "video"],
     nullable: false,
   })
-  mediaType!: "image" | "video";
+  mediaType: "image" | "video";
 
   @Column({
     type: "text",
     nullable: false,
   })
-  mediaUrl!: string;
+  mediaUrl: string;
 
   @CreateDateColumn({ type: "datetime" })
-  createdAt!: Date;
+  created_at: Date;
 }
