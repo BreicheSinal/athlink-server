@@ -12,17 +12,16 @@ import {
 import { User } from "./User";
 
 @Entity("post")
-@Index(["user"])
 export class Post {
   @PrimaryGeneratedColumn("increment", {
     type: "bigint",
     unsigned: true,
   })
-  id!: number;
+  id: number;
 
   @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
-  user!: User;
+  user: User;
 
   @Column({
     type: "text",
@@ -35,18 +34,18 @@ export class Post {
     unsigned: true,
     default: 0,
   })
-  likesCount!: number;
+  likesCount: number;
 
   @Column({
     type: "int",
     unsigned: true,
     default: 0,
   })
-  commentsCount!: number;
+  commentsCount: number;
 
   @CreateDateColumn({ type: "datetime" })
-  createdAt!: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: "datetime" })
-  updatedAt!: Date;
+  updated_at: Date;
 }
