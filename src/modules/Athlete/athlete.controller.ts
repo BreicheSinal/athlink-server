@@ -171,6 +171,7 @@ export const getAthlete = async (req: Request, res: Response) => {
       athlete: result.athlete,
       experience: result.experience,
       tryOuts: result.tryOuts,
+      posts: result.posts,
     });
   } catch (error: unknown) {
     const errorMessage =
