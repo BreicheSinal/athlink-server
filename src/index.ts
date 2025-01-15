@@ -11,6 +11,7 @@ import club from "./modules/Club/club.routes";
 import federation from "./modules/Federation/federation.routes";
 import coach from "./modules/Coach/coach.routes";
 import user from "./modules/User/user.routes";
+import post from "./modules/Post/post.routes";
 
 const app: Express = express();
 const server = http.createServer(app);
@@ -27,6 +28,7 @@ app.use("/club", club);
 app.use("/federation", federation);
 app.use("/coach", coach);
 app.use("/user", user);
+app.use("/post", post);
 
 server.listen(process.env.SERVER_PORT, async () => {
   try {
