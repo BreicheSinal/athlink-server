@@ -6,12 +6,16 @@ import { Trophy } from "../../db/entities/Trophy";
 import { Federation } from "../../db/entities/Federation";
 import { ExperienceCertification } from "../../db/entities/ExperienceCertification";
 import { AthleteTryOutApplication } from "../../db/entities/AthleteTryOutApplication ";
+import { Post } from "../../db/entities/Post";
+import { PostMedia } from "../../db/entities/PostMedia";
 import {
   EditProfileInput,
   EditBioInput,
   AddTrophyInput,
 } from "../../utils/schemas/generalSchema";
 
+const postMediaRepo = AppDataSource.getRepository(PostMedia);
+const postRepo = AppDataSource.getRepository(Post);
 const athleteTrRepo = AppDataSource.getRepository(AthleteTryOutApplication);
 const athleteRepository = AppDataSource.getRepository(Athlete);
 const clubRepository = AppDataSource.getRepository(Club);
@@ -161,10 +165,51 @@ export const getAthleteService = async (id: number) => {
     };
   });
 
+  const posts = await postRepo.find({
+    where: {
+      user: { id: athlete[0].user.id },
+    },
+    relations: ["user"],
+    select: {
+      id: true,
+      description: true,
+      likes_count: true,
+      comments_count: true,
+    },
+  });
+
+  const formattedAthletePost = await Promise.all(
+    posts.map(async (pst) => {
+      const postMedia = await postMediaRepo.find({
+        where: {
+          post: { id: pst.id }, 
+        },
+        select: {
+          media_url: true,
+        },
+      });
+
+      const images = postMedia.map((media) => media.media_url);
+
+      return {
+        user_id: pst.user.id,
+        user_name: pst.user.name,
+        id: pst.id,
+        description: pst.description,
+        likes_count: pst.likes_count,
+        comments_count: pst.comments_count,
+        images: images,
+      };
+    })
+  );
+
+  console.log(formattedAthletePost);
+
   return {
     athlete,
     experience: athleteExp,
     tryOuts: formattedAthleteTr,
+    posts: formattedAthletePost,
   };
 };
 
