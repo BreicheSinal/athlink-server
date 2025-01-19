@@ -12,6 +12,7 @@ import federation from "./modules/Federation/federation.routes";
 import coach from "./modules/Coach/coach.routes";
 import user from "./modules/User/user.routes";
 import post from "./modules/Post/post.routes";
+import notes from "./modules/Notes/notes.routes";
 
 const app: Express = express();
 const server = http.createServer(app);
@@ -29,6 +30,7 @@ app.use("/federation", federation);
 app.use("/coach", coach);
 app.use("/user", user);
 app.use("/post", post);
+app.use("/notes", notes);
 
 server.listen(process.env.SERVER_PORT, async () => {
   try {
