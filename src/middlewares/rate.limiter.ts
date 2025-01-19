@@ -17,3 +17,12 @@ export const loginLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+// Notes rate limiter
+export const notesLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 25, // 25 requests per hour
+  message: "Too many requests. Please try again later",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
