@@ -64,11 +64,30 @@ export class TrophyService {
   async getTrophiesByOwner(ownerAddress: string): Promise<Trophy[]> {
     try {
       const trophyIds = await contract.getTrophiesByOwner(ownerAddress);
-      return Promise.all(
-        trophyIds.map((id: bigint) => this.getTrophyById(Number(id)))
+
+      if (!trophyIds) {
+        return [];
+      }
+
+      const ids = Array.isArray(trophyIds) ? trophyIds : [];
+
+      if (ids.length === 0) {
+        return [];
+      }
+
+      const trophies = await Promise.all(
+        ids.map((id: bigint) => this.getTrophyById(Number(id)))
       );
-    } catch (error) {
+
+      return trophies.filter((trophy) => trophy != null);
+    } catch (error: any) {
       console.error("Error getting trophies by owner:", error);
+      if (
+        error.message?.includes("no trophies found") ||
+        error.message?.includes("not found")
+      ) {
+        return [];
+      }
       throw error;
     }
   }
