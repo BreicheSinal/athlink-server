@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
+import helmet from "helmet";
 
 dotenv.config();
 
@@ -12,6 +13,8 @@ export const init = (app: Express) => {
       credentials: true,
     })
   );
+
+    app.use(helmet());
 
   app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 };
