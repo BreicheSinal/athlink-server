@@ -12,6 +12,6 @@ router.post("/req/trophy", requestTrophy);
 router.post("/verify/trophy/:id", verifyTrophy);
 
 router.get("/trophy/:id", getTrophyById);
-router.get("/trophies/owner/:address", getTrophiesByOwner);
+router.get("/trophies/owner/:address", getTrophiesByOwner as any);
 
 export default router;
