@@ -10,7 +10,7 @@ export const requestTrophy = async (req: Request, res: Response) => {
 
     const trophyId = await trophyService.requestTrophy(name, description);
 
-    res.status(201).json({ trophyId });
+    res.status(201).json({ trophyId, name, description });
   } catch (error) {
     console.error(error);
 
@@ -84,14 +84,14 @@ export const getTrophiesByOwner = async (req: Request, res: Response) => {
   try {
     const { address } = req.params;
 
+    if (!address) {
+      return res.status(400).json({ message: "Address is required" });
+    }
+
     const trophies = await trophyService.getTrophiesByOwner(address);
 
     if (!trophies || trophies.length === 0) {
-      throwNotFound({ 
-        entity: "Trophies for this owner",
-        res 
-    });
-      return;
+      return res.status(204).send();
     }
 
     const serializedTrophies = trophies.map((trophy: any) => {
@@ -103,8 +103,16 @@ export const getTrophiesByOwner = async (req: Request, res: Response) => {
     });
 
     res.json(serializedTrophies);
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    console.error("Error in getTrophiesByOwner:", error);
+
+    // If it's a known error type, handle it accordingly
+    if (
+      error.message?.includes("no trophies found") ||
+      error.message?.includes("not found")
+    ) {
+      return res.status(204).send();
+    }
 
     throwError({
       message: "Failed to get trophies",
