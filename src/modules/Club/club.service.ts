@@ -194,7 +194,7 @@ const createMeeting = async (tryoutName: string, startDate: Date) => {
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.API_KEY}`,
+          Authorization: `Bearer ${process.env.DAILY_API_KEY}`,
           "Content-Type": "application/json",
         },
       }
@@ -240,7 +240,7 @@ const deleteMeeting = async (roomName: string): Promise<void> => {
   try {
     await axios.delete(`https://api.daily.co/v1/rooms/${roomName}`, {
       headers: {
-        Authorization: `Bearer ${process.env.API_KEY}`,
+        Authorization: `Bearer ${process.env.DAILY_API_KEY}`,
         "Content-Type": "application/json",
       },
     });
