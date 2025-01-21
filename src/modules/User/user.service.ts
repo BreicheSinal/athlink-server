@@ -108,6 +108,9 @@ export const getAcceptedConnectionsService = async (userId: number) => {
         },
       },
     },
+    order: {
+      created_at: "DESC",
+    },
   });
 
   return connections.map((connection) => ({
