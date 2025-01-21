@@ -9,7 +9,6 @@ import {
 } from "typeorm";
 
 import { User } from "./User";
-import { FederationType } from "./FederationType";
 
 @Entity("federation")
 export class Federation {
@@ -22,12 +21,6 @@ export class Federation {
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({ name: "user_id" })
   user: User;
-
-  @ManyToOne(() => FederationType, (federationType) => federationType.id, {
-    nullable: true,
-  })
-  @JoinColumn({ name: "federation_type_id" })
-  federationType: FederationType;
 
   @Column({
     type: "varchar",

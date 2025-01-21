@@ -10,7 +10,6 @@ import {
 import {
   editProfileService,
   editBioService,
-  addTrophyService,
   getAthleteService,
   getAthleteByUserIDService,
   applyTryOutService,
@@ -103,46 +102,6 @@ export const editBio = async (req: Request, res: Response) => {
   }
 };
 
-export const addTrophy = async (req: Request, res: Response) => {
-  try {
-    const { entity_id } = req.params;
-
-    const parsedEntityId = parseInt(entity_id, 10);
-    if (isNaN(parsedEntityId) || parsedEntityId <= 0) {
-      return throwError({
-        message: `Invalid entity_id: ${entity_id}`,
-        res,
-        status: 400,
-      });
-    }
-
-    const result = addTrophySchema.safeParse(req.body);
-    if (!result.success) {
-      return throwError({
-        message: "Validation error",
-        res,
-        status: 400,
-        details: result.error.format(),
-      });
-    }
-
-    const createdTrophy = await addTrophyService(parsedEntityId, result.data);
-
-    return res.status(201).json({
-      message: "Trophy created successfully",
-      trophy: createdTrophy,
-    });
-  } catch (error: unknown) {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error occurred";
-    console.error(`Error: ${errorMessage}`);
-    return throwError({
-      message: errorMessage,
-      res,
-    });
-  }
-};
-
 export const getAthlete = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
@@ -171,7 +130,6 @@ export const getAthlete = async (req: Request, res: Response) => {
       athlete: result.athlete,
       experience: result.experience,
       tryOuts: result.tryOuts,
-      posts: result.posts,
     });
   } catch (error: unknown) {
     const errorMessage =
